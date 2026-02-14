@@ -105,6 +105,7 @@ export const Admin: React.FC = () => {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
   const [filter, setFilter] = useState('');
+  const [loading, setLoading] = useState(false);
 
   // Initial Data Load
   useEffect(() => {
@@ -113,42 +114,37 @@ export const Admin: React.FC = () => {
     }
   }, [isAuthenticated]);
 
-  const refreshData = () => {
+  const refreshData = async () => {
+    setLoading(true);
     try {
-        const storedLeads = JSON.parse(localStorage.getItem('hospintel_db_demos') || '[]');
-        const storedInquiries = JSON.parse(localStorage.getItem('hospintel_db_inquiries') || '[]');
-        setLeads(storedLeads);
-        setInquiries(storedInquiries);
+        const storedLeads = await api.getLeads();
+        const storedInquiries = await api.getInquiries();
+        
+        // Sort descending by timestamp
+        setLeads(storedLeads.sort((a: any, b: any) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()));
+        setInquiries(storedInquiries.sort((a: any, b: any) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()));
     } catch (e) {
         console.error("Data corruption", e);
+    } finally {
+        setLoading(false);
     }
   };
 
-  const handleDelete = (id: string, type: 'leads' | 'inquiries') => {
+  const handleDelete = async (id: string, type: 'leads' | 'inquiries') => {
     if (confirm('Are you sure you want to permanently delete this record?')) {
-        if (type === 'leads') {
-            const updated = leads.filter(l => l.id !== id);
-            setLeads(updated);
-            localStorage.setItem('hospintel_db_demos', JSON.stringify(updated));
-        } else {
-            const updated = inquiries.filter(i => i.id !== id);
-            setInquiries(updated);
-            localStorage.setItem('hospintel_db_inquiries', JSON.stringify(updated));
-        }
+        await api.deleteRecord(type, id);
+        refreshData();
     }
   };
 
   const exportToCSV = (data: any[], filename: string) => {
     if (data.length === 0) return;
     
-    // Get headers
     const headers = Object.keys(data[0]).join(',');
-    
-    // Map rows (escape commas)
     const rows = data.map(obj => {
         return Object.values(obj).map(val => {
             const str = String(val);
-            return `"${str.replace(/"/g, '""')}"`; // Escape quotes
+            return `"${str.replace(/"/g, '""')}"`;
         }).join(',');
     }).join('\n');
 
@@ -166,16 +162,15 @@ export const Admin: React.FC = () => {
 
   if (!isAuthenticated) return <LoginScreen onLogin={() => setIsAuthenticated(true)} />;
 
-  // Filter Logic
   const filteredLeads = leads.filter(l => 
-    l.organization.toLowerCase().includes(filter.toLowerCase()) || 
-    l.email.toLowerCase().includes(filter.toLowerCase()) ||
-    l.fullName.toLowerCase().includes(filter.toLowerCase())
+    (l.organization?.toLowerCase().includes(filter.toLowerCase()) || '') || 
+    (l.email?.toLowerCase().includes(filter.toLowerCase()) || '') ||
+    (l.fullName?.toLowerCase().includes(filter.toLowerCase()) || '')
   );
 
   const filteredInquiries = inquiries.filter(i => 
-    i.email.toLowerCase().includes(filter.toLowerCase()) || 
-    i.lastName.toLowerCase().includes(filter.toLowerCase())
+    (i.email?.toLowerCase().includes(filter.toLowerCase()) || '') || 
+    (i.lastName?.toLowerCase().includes(filter.toLowerCase()) || '')
   );
 
   return (
@@ -191,9 +186,9 @@ export const Admin: React.FC = () => {
                <h1 className="text-3xl font-bold text-white">Data Control Plane</h1>
             </div>
             <div className="flex items-center gap-3">
-               <span className="text-xs text-[#52525B] font-mono mr-2">LOCAL_STORE :: ACTIVE</span>
-               <Button size="sm" variant="secondary" onClick={refreshData}>
-                  <RefreshCw className="w-4 h-4 mr-2" /> Sync
+               <span className="text-xs text-[#52525B] font-mono mr-2">INDEXED_DB :: ACTIVE</span>
+               <Button size="sm" variant="secondary" onClick={refreshData} disabled={loading}>
+                  <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} /> Sync
                </Button>
                <Button size="sm" variant="outline" onClick={() => setIsAuthenticated(false)}>Logout</Button>
             </div>
@@ -422,8 +417,7 @@ export const Admin: React.FC = () => {
                     <div className="text-green-500 mb-1">[INFO] System initialized at {new Date().toLocaleTimeString()}</div>
                     <div className="text-[#52525B] mb-1">[SYS] Connecting to local storage daemon... OK</div>
                     <div className="text-[#52525B] mb-1">[AUTH] Admin session started for user: admin@hospintel.com</div>
-                    <div className="text-[#52525B] mb-1">[DB] Rehydrating state from 'hospintel_db_demos'... OK ({leads.length} records)</div>
-                    <div className="text-[#52525B] mb-1">[DB] Rehydrating state from 'hospintel_db_inquiries'... OK ({inquiries.length} records)</div>
+                    <div className="text-[#52525B] mb-1">[DB] Rehydrating state from 'hospintel_core_db'... OK</div>
                     <div className="text-blue-400 mb-1">[NET] Sync engine idle. Waiting for upstream connection...</div>
                     <div className="text-amber-500 mb-1">[WARN] Telemetry: High latency detected on node 'AF-WEST-1' (simulated)</div>
                     <div className="text-[#52525B] mb-1">[SYS] Routine maintenance scheduled for 03:00 WAT</div>

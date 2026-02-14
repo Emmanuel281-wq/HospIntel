@@ -1,11 +1,73 @@
 // Mock API to simulate backend interactions without exposing secrets in UI components
 
 // SHA-256 Hash for "hospintel_secure"
-// To change password, generate a new SHA-256 hash and replace this string.
 const ADMIN_HASH_SHA256 = "d94943f240507a242d5930335b89799276d497c2377f407767667d7d52673322";
 
 // Replace with your actual Formspree or backend endpoint
 const PRODUCTION_ENDPOINT = "https://formspree.io/f/YOUR_FORM_ID";
+
+// --- IndexedDB Configuration ---
+const DB_NAME = 'hospintel_core_db';
+const DB_VERSION = 1;
+const STORES = {
+  LEADS: 'leads',
+  INQUIRIES: 'inquiries'
+};
+
+const initDB = (): Promise<IDBDatabase> => {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(DB_NAME, DB_VERSION);
+    request.onerror = () => reject(request.error);
+    request.onsuccess = () => resolve(request.result);
+    request.onupgradeneeded = (event) => {
+      const db = (event.target as IDBOpenDBRequest).result;
+      if (!db.objectStoreNames.contains(STORES.LEADS)) {
+        db.createObjectStore(STORES.LEADS, { keyPath: 'id' });
+      }
+      if (!db.objectStoreNames.contains(STORES.INQUIRIES)) {
+        db.createObjectStore(STORES.INQUIRIES, { keyPath: 'id' });
+      }
+    };
+  });
+};
+
+const dbOp = {
+    getAll: async (storeName: string): Promise<any[]> => {
+        try {
+            const db = await initDB();
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction(storeName, 'readonly');
+                const store = tx.objectStore(storeName);
+                const request = store.getAll();
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        } catch (e) {
+            console.error("DB Read Error", e);
+            return [];
+        }
+    },
+    add: async (storeName: string, item: any): Promise<void> => {
+        const db = await initDB();
+        return new Promise((resolve, reject) => {
+            const tx = db.transaction(storeName, 'readwrite');
+            const store = tx.objectStore(storeName);
+            const request = store.add(item);
+            request.onsuccess = () => resolve();
+            request.onerror = () => reject(request.error);
+        });
+    },
+    delete: async (storeName: string, id: string): Promise<void> => {
+        const db = await initDB();
+        return new Promise((resolve, reject) => {
+            const tx = db.transaction(storeName, 'readwrite');
+            const store = tx.objectStore(storeName);
+            const request = store.delete(id);
+            request.onsuccess = () => resolve();
+            request.onerror = () => reject(request.error);
+        });
+    }
+};
 
 /**
  * Helper to hash input string
@@ -22,23 +84,37 @@ export const api = {
      * Simulates secure authentication check using SHA-256
      */
     verifyAdminPassword: async (password: string): Promise<boolean> => {
-        // Simulate network delay
         await new Promise(resolve => setTimeout(resolve, 800));
-        
         const inputHash = await hashString(password);
         return inputHash === ADMIN_HASH_SHA256;
     },
 
     /**
-     * Submits form to backend, falling back to local storage if endpoint is not configured
+     * Admin: Get all records
+     */
+    getLeads: () => dbOp.getAll(STORES.LEADS),
+    getInquiries: () => dbOp.getAll(STORES.INQUIRIES),
+
+    /**
+     * Admin: Delete record
+     */
+    deleteRecord: (type: 'leads' | 'inquiries', id: string) => {
+        const store = type === 'leads' ? STORES.LEADS : STORES.INQUIRIES;
+        return dbOp.delete(store, id);
+    },
+
+    /**
+     * Submits form to backend, falling back to IndexedDB if endpoint is not configured
      */
     submitForm: async (endpoint: 'contact' | 'demo', data: any): Promise<{ success: boolean; message: string }> => {
         await new Promise(resolve => setTimeout(resolve, 1500));
         
         const payload = {
+            id: crypto.randomUUID(),
             ...data,
-            _timestamp: new Date().toISOString(),
-            _source: endpoint === 'contact' ? 'CONTACT_FORM' : 'WEB_FORM'
+            timestamp: new Date().toISOString(),
+            source: endpoint === 'contact' ? 'CONTACT_FORM' : 'WEB_FORM',
+            status: 'NEW'
         };
 
         // 1. Try Production Endpoint (Formspree/API)
@@ -51,26 +127,20 @@ export const api = {
                 });
                 
                 if (response.ok) {
+                    // Even if sent to cloud, we might want to keep a local copy or just return success
                     return { success: true, message: 'Transmission successful.' };
                 }
             }
         } catch (e) {
-            console.warn("Backend unreachable, falling back to local persistence.");
+            console.warn("Backend unreachable, switching to offline persistence.");
         }
 
-        // 2. Fallback: Persist to Local Storage (Demo Mode)
+        // 2. Fallback: Persist to IndexedDB
         try {
-            console.log(`[API] POST /v1/${endpoint} (FALLBACK_MODE)`, payload);
-            
-            const key = endpoint === 'contact' ? 'hospintel_db_inquiries' : 'hospintel_db_demos';
-            const existing = JSON.parse(localStorage.getItem(key) || '[]');
-            const newRecord = {
-                id: crypto.randomUUID(),
-                ...payload,
-                status: 'NEW'
-            };
-            localStorage.setItem(key, JSON.stringify([newRecord, ...existing]));
-            return { success: true, message: 'Record queued for processing (Local)' };
+            console.log(`[API] POST /v1/${endpoint} (INDEXED_DB)`, payload);
+            const store = endpoint === 'contact' ? STORES.INQUIRIES : STORES.LEADS;
+            await dbOp.add(store, payload);
+            return { success: true, message: 'Record queued for processing (Local DB)' };
         } catch (e) {
             return { success: false, message: 'Storage quota exceeded' };
         }

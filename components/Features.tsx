@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { motion, useScroll, useTransform, Variants } from 'framer-motion';
-import { Wifi, Shield, Zap, Globe } from 'lucide-react';
+import { Wifi, Shield, Zap, LayoutDashboard } from 'lucide-react';
 import { Container } from './ui/Container';
 
 const containerVariants: Variants = {
@@ -118,16 +118,16 @@ export const Features: React.FC = () => {
 
           <BentoItem 
             className="md:col-span-3"
-            title="Global Infrastructure State"
-            description="Monitor thousands of nodes across multiple geographical regions from a single command plane."
-            icon={Globe}
+            title="Centralized Facility Operations"
+            description="Monitor multiple departments, wards, and satellite clinics from a single command plane."
+            icon={LayoutDashboard}
           >
             <div className="grid grid-cols-4 gap-4 mt-2">
-               {['Lagos', 'Abuja', 'Nairobi', 'Accra'].map((region, i) => (
+               {['ER Triage', 'ICU West', 'Pharmacy', 'Lab Services'].map((region, i) => (
                   <div key={region} className="flex items-center gap-3 p-2 rounded bg-[#0F0F0F] border border-[#262626]">
                      <div className={`w-2 h-2 rounded-full ${i===3 ? 'bg-hosp-gold' : 'bg-blue-500'}`}></div>
                      <span className="text-xs font-mono text-[#A1A1AA]">{region}</span>
-                     <span className="ml-auto text-xs font-mono text-[#52525B]">{i === 3 ? 'WARN' : 'OK'}</span>
+                     <span className="ml-auto text-xs font-mono text-[#52525B]">{i === 3 ? 'BUSY' : 'OK'}</span>
                   </div>
                ))}
             </div>
