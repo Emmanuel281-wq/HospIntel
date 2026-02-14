@@ -157,7 +157,7 @@ export const Insights: React.FC = () => {
               readTime="15 min read"
               type="Whitepaper"
               title="Data Sovereignty in the Age of Cloud: A Legal Framework"
-              excerpt="Navigating NDPR, GDPR, and HIPAA while maintaining the benefits of a distributed cloud architecture."
+              excerpt="Navigating NDPR and African Data Sovereignty laws while maintaining the benefits of a distributed cloud architecture."
            />
            <ArticleCard 
               slug="algorithmic-triage"

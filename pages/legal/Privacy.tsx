@@ -42,14 +42,14 @@ export const Privacy: React.FC = () => {
            </section>
 
            <section>
-              <h2 className="text-xl font-bold text-white mb-4">4. Compliance Frameworks</h2>
+              <h2 className="text-xl font-bold text-white mb-4">4. African Compliance Frameworks</h2>
               <p>
-                 We adhere to the following regulatory standards:
+                 We adhere to the following regulatory standards tailored for the African continent:
               </p>
               <ul className="list-disc pl-5 space-y-2 mt-2">
                  <li><strong>NDPR (Nigeria):</strong> Full compliance with the Nigeria Data Protection Regulation (2019) and NDPA (2023).</li>
-                 <li><strong>HIPAA (USA):</strong> We maintain HIPAA-compliant safeguards for international compatibility.</li>
-                 <li><strong>GDPR (EU):</strong> We support Right to Erasure and Data Portability requests where applicable.</li>
+                 <li><strong>Data Sovereignty:</strong> We guarantee that all patient health data is legally resident within the continent or handled via sovereign-encrypted tunnels where local infrastructure is unavailable.</li>
+                 <li><strong>ISO 27001:</strong> We maintain international best practices for Information Security Management.</li>
               </ul>
            </section>
 

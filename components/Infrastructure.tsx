@@ -6,43 +6,19 @@ import { Network, Database, Wifi, WifiOff, Server } from 'lucide-react';
 export const Infrastructure: React.FC = () => {
   const containerRef = useRef<HTMLElement>(null);
   const [isOffline, setIsOffline] = useState(false);
-  const [logs, setLogs] = useState<string[]>([
-    "[SYS] INITIALIZING DAEMON...",
-    "[NET] LISTENING ON PORT 443",
-    "[DAG] GRAPH SYNCED: OK"
-  ]);
+  const [logs, setLogs] = useState<string[]>([]);
 
-  // Cycle the simulation state to demonstrate failover
   useEffect(() => {
-    const interval = setInterval(() => {
-      setIsOffline(prev => !prev);
-    }, 6000);
-    return () => clearInterval(interval);
+    // Initial stable logs
+    setLogs([
+        "[SYS] INITIALIZING DAEMON...",
+        "[NET] LISTENING ON PORT 443",
+        "[DAG] GRAPH SYNCED: OK",
+        "[INFO] UPLINK DETECTED",
+        "[NET] HANDSHAKE_ACK (LOS-1)",
+        "[SUCCESS] SYNC_COMPLETE"
+    ]);
   }, []);
-
-  // Update logs based on state
-  useEffect(() => {
-    const timestamp = new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    if (isOffline) {
-      addLog(`[${timestamp}] CRIT: UPSTREAM_TIMEOUT`);
-      setTimeout(() => addLog(`[${timestamp}] WARN: CLOUD UNREACHABLE`), 500);
-      setTimeout(() => addLog(`[${timestamp}] INFO: SWARM_MODE_ACTIVATED`), 1200);
-      setTimeout(() => addLog(`[${timestamp}] SUCCESS: 6 PEERS CONNECTED`), 2000);
-    } else {
-      addLog(`[${timestamp}] INFO: UPLINK DETECTED`);
-      setTimeout(() => addLog(`[${timestamp}] NET: HANDSHAKE_ACK (LOS-1)`), 800);
-      setTimeout(() => addLog(`[${timestamp}] DATA: DELTA_MERGE_START`), 1500);
-      setTimeout(() => addLog(`[${timestamp}] SUCCESS: SYNC_COMPLETE`), 2200);
-    }
-  }, [isOffline]);
-
-  const addLog = (msg: string) => {
-    setLogs(prev => {
-      const newLogs = [...prev, msg];
-      if (newLogs.length > 6) return newLogs.slice(newLogs.length - 6);
-      return newLogs;
-    });
-  };
 
   return (
     <section ref={containerRef} className="py-24 md:py-32 bg-[#050505] border-y border-[#1F1F1F] relative overflow-hidden">

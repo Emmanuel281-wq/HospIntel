@@ -10,14 +10,6 @@ export const Hero: React.FC = () => {
   const [networkState, setNetworkState] = useState<'online' | 'offline'>('online');
   const navigate = useNavigate();
   
-  // Cycle network state to demonstrate offline-first capability
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setNetworkState(prev => prev === 'online' ? 'offline' : 'online');
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
-  
   // Mouse tracking for interactive spotlight
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);

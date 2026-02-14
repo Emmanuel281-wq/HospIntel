@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container } from '../../components/ui/Container';
-import { ShieldCheck, FileCheck, Globe, Lock } from 'lucide-react';
+import { ShieldCheck, Globe, Lock } from 'lucide-react';
 
 const ComplianceCard = ({ title, desc, icon: Icon, tags }: any) => (
   <div className="p-8 rounded-xl bg-[#0A0A0A] border border-[#1F1F1F] hover:border-[#333] transition-colors">
@@ -39,7 +39,7 @@ export const Compliance: React.FC = () => {
            />
            <ComplianceCard 
              title="ISO 27001"
-             desc="Certified Information Security Management System (ISMS) covering all aspects of our engineering and operations in Lagos and Abuja."
+             desc="Certified Information Security Management System (ISMS) covering all aspects of our engineering and operations in Lagos."
              icon={Lock}
              tags={['International', 'ISMS']}
            />
@@ -48,12 +48,6 @@ export const Compliance: React.FC = () => {
              desc="We offer guaranteed local data residency via MainOne (MDXi) in Lagos and Rack Centre to meet regulatory requirements."
              icon={Globe}
              tags={['Lagos', 'Johannesburg']}
-           />
-           <ComplianceCard 
-             title="HIPAA"
-             desc="Our architecture ensures adherence to international best practices, compatible with US Privacy and Security Rules."
-             icon={FileCheck}
-             tags={['Standard', 'BAA Ready']}
            />
         </div>
 

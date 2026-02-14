@@ -75,7 +75,6 @@ export const Footer: React.FC = () => {
               <li><Link to="/legal/privacy" className="hover:text-blue-400 transition-colors">Privacy Policy</Link></li>
               <li><Link to="/legal/terms" className="hover:text-blue-400 transition-colors">Terms of Service</Link></li>
               <li><Link to="/legal/compliance" className="hover:text-blue-400 transition-colors">Compliance (NDPR)</Link></li>
-              <li><Link to="/legal/compliance" className="hover:text-blue-400 transition-colors">Compliance (HIPAA)</Link></li>
             </ul>
           </div>
         </div>
@@ -83,7 +82,7 @@ export const Footer: React.FC = () => {
         {/* Technical Footer Status Bar */}
         <div className="pt-8 border-t border-[#262626] flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="text-xs text-[#52525B] font-mono">
-            © 2026 HOSPINTEL SYSTEMS INC. [LAGOS_HQ]
+            © 2026 HOSPINTEL SYSTEMS INC. [LAGOS]
           </div>
           
           <div className="flex items-center gap-6">

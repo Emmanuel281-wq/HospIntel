@@ -187,7 +187,7 @@ const ARTICLES: Record<string, any> = {
   },
   "data-sovereignty": {
     title: "Data Sovereignty in the Age of Cloud: A Legal Framework",
-    subtitle: "Navigating NDPR, GDPR, and HIPAA in distributed architectures.",
+    subtitle: "Navigating NDPR and African Data Sovereignty laws in distributed architectures.",
     date: "September 20, 2026",
     readTime: "15 min read",
     author: "Legal & Compliance",

@@ -3,6 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
+    
+    <!-- SECURITY: Content Security Policy -->
+    <!-- Updated to allow data: URIs for scripts and specific CDNs required by the environment -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdn.tailwindcss.com https://esm.sh https://cdn.jsdelivr.net https://ai.studio; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://grainy-gradients.vercel.app; connect-src 'self' https://esm.sh; object-src 'none'; base-uri 'self';" />
+    
     <title>HospIntel | Enterprise Hospital Operating System</title>
     
     <!-- SEO Meta Tags -->
@@ -16,7 +21,7 @@
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://hospintel.com/" />
     <meta property="og:title" content="HospIntel | Infrastructure for Modern Healthcare" />
-    <meta property="og:description" content="An offline-first hospital operating system designed for mission-critical reliability and operational continuity." />
+    <meta property="og:description" content="An offline-first hospital operating system designed for mission-critical reliability, operational continuity, and zero-downtime performance." />
     <meta property="og:site_name" content="HospIntel" />
     
     <!-- Twitter -->
@@ -36,6 +41,9 @@
     <!-- Tailwind CSS (Runtime for demo environment) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
+      // Polyfill for React/Framer Motion which might expect process.env
+      window.process = { env: { NODE_ENV: 'production' } };
+
       tailwind.config = {
         theme: {
           extend: {
@@ -136,12 +144,13 @@
         "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
         "react-router-dom": "https://esm.sh/react-router-dom@6.22.3?external=react,react-dom",
         "lucide-react": "https://esm.sh/lucide-react@0.344.0?external=react",
-        "framer-motion": "https://esm.sh/framer-motion@11.0.8?external=react,react-dom"
+        "framer-motion": "https://esm.sh/framer-motion@10.18.0?external=react,react-dom"
       }
     }
     </script>
   </head>
   <body>
     <div id="root"></div>
+    <script type="module" src="./index.tsx"></script>
   </body>
 </html>
