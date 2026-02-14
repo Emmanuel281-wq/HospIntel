@@ -1,34 +1,38 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { motion, useScroll, useTransform, useSpring, useMotionValue, AnimatePresence } from 'framer-motion';
-import { Database, Activity, Users, Clock, ArrowUpRight, Wifi, WifiOff, AlertTriangle, ShieldCheck, UserPlus, CheckCircle2, Cloud, RefreshCw } from 'lucide-react';
+import { Database, Activity, Users, Clock, ArrowUpRight, Wifi, WifiOff, AlertTriangle, ShieldCheck, UserPlus, CheckCircle2, Cloud, RefreshCw, BarChart3, PieChart } from 'lucide-react';
 import { Container } from './ui/Container';
 import { useNavigate } from 'react-router-dom';
 
 // Dashboard Simulation States
-type DashboardPhase = 'QUEUE' | 'ADMISSION' | 'OFFLINE' | 'SYNC';
+type DashboardPhase = 'OVERVIEW' | 'QUEUE' | 'ADMISSION' | 'OFFLINE' | 'SYNC';
 
 export const Hero: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollY } = useScroll();
-  const [phase, setPhase] = useState<DashboardPhase>('QUEUE');
+  const [phase, setPhase] = useState<DashboardPhase>('OVERVIEW');
   const navigate = useNavigate();
   
   // Simulation Loop
   useEffect(() => {
     const cycle = async () => {
-      // 1. Queue View (Start)
+      // 1. Overview (Start)
+      setPhase('OVERVIEW');
+      await new Promise(r => setTimeout(r, 5000));
+
+      // 2. Queue View
       setPhase('QUEUE');
       await new Promise(r => setTimeout(r, 4000));
       
-      // 2. Admission View
+      // 3. Admission View
       setPhase('ADMISSION');
       await new Promise(r => setTimeout(r, 3000));
       
-      // 3. Offline Event (while in admission)
+      // 4. Offline Event (while in admission)
       setPhase('OFFLINE');
       await new Promise(r => setTimeout(r, 3500));
       
-      // 4. Sync Event (while in admission)
+      // 5. Sync Event (while in admission)
       setPhase('SYNC');
       await new Promise(r => setTimeout(r, 3000));
       
@@ -92,17 +96,22 @@ export const Hero: React.FC = () => {
         <motion.div 
           animate={{
             background: [
-              "radial-gradient(circle at 20% 30%, rgba(20,20,20,1) 0%, rgba(5,5,5,1) 100%)",
-              "radial-gradient(circle at 80% 70%, rgba(10,25,45,1) 0%, rgba(5,5,5,1) 100%)", 
-              "radial-gradient(circle at 20% 30%, rgba(20,20,20,1) 0%, rgba(5,5,5,1) 100%)"
+              "radial-gradient(circle at 20% 30%, rgba(25,30,40,1) 0%, rgba(5,5,5,1) 100%)",
+              "radial-gradient(circle at 80% 70%, rgba(15,35,60,1) 0%, rgba(5,5,5,1) 100%)", 
+              "radial-gradient(circle at 20% 30%, rgba(25,30,40,1) 0%, rgba(5,5,5,1) 100%)"
             ]
           }}
           transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-          className="absolute inset-0 opacity-60"
+          className="absolute inset-0 opacity-70"
         />
+        
+        {/* Additional Glass Glow Layers */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-[100px] mix-blend-screen pointer-events-none" />
+        <div className="absolute top-1/4 left-1/4 w-[400px] h-[400px] bg-indigo-500/10 rounded-full blur-[80px] mix-blend-screen pointer-events-none" />
+
         <motion.div 
           style={{ x: springX, y: mouseY }}
-          className="fixed top-0 left-0 w-[1000px] h-[1000px] bg-[radial-gradient(circle,rgba(59,130,246,0.06)_0%,rgba(234,179,8,0.03)_20%,transparent_70%)] rounded-full blur-[80px] -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0 mix-blend-screen"
+          className="fixed top-0 left-0 w-[1000px] h-[1000px] bg-[radial-gradient(circle,rgba(59,130,246,0.08)_0%,rgba(234,179,8,0.04)_20%,transparent_70%)] rounded-full blur-[80px] -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0 mix-blend-screen"
         />
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff03_1px,transparent_1px),linear-gradient(to_bottom,#ffffff03_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]"></div>
       </motion.div>
@@ -123,11 +132,14 @@ export const Hero: React.FC = () => {
             }}
             className="w-full lg:w-3/5 order-2 lg:order-1 relative perspective-[2000px] group"
           >
-            {/* Holographic Glow */}
-            <div className={`absolute -inset-1 bg-gradient-to-b transition-colors duration-1000 blur-3xl opacity-40 rounded-[2rem] group-hover:opacity-60 ${isOffline ? 'from-amber-500/10 via-red-500/5' : 'from-blue-500/10 via-hosp-gold/5'} to-transparent`}></div>
+            {/* Holographic Glow - Enhanced */}
+            <div className={`absolute -inset-1 bg-gradient-to-b transition-colors duration-1000 blur-2xl opacity-50 rounded-[2rem] group-hover:opacity-70 ${isOffline ? 'from-amber-500/20 via-red-500/10' : 'from-blue-500/20 via-hosp-gold/10'} to-transparent`}></div>
             
-            {/* Main Interface Frame */}
-            <div className="rounded-xl border border-white/10 bg-[#0A0A0A]/80 backdrop-blur-xl shadow-[0_0_0_1px_rgba(255,255,255,0.05),0_50px_100px_-20px_rgba(0,0,0,0.5)] overflow-hidden relative ring-1 ring-white/5">
+            {/* Main Interface Frame - Enhanced Glass Effect */}
+            <div className="rounded-xl border border-white/10 bg-[#0A0A0A]/60 backdrop-blur-2xl shadow-[0_0_0_1px_rgba(255,255,255,0.05),0_50px_100px_-20px_rgba(0,0,0,0.5),inset_0_0_20px_rgba(255,255,255,0.02)] overflow-hidden relative ring-1 ring-white/10">
+              
+              {/* Glossy Reflection Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-tr from-white/5 via-transparent to-transparent pointer-events-none z-0" />
               
               {/* Header: Network Status & Controls */}
               <div className="h-10 border-b border-white/5 bg-white/[0.02] flex items-center justify-between px-4 relative z-20">
@@ -163,7 +175,7 @@ export const Hero: React.FC = () => {
               </div>
 
               {/* Main Workspace */}
-              <div className="grid grid-cols-12 h-[380px] md:h-[420px] relative">
+              <div className="grid grid-cols-12 h-[380px] md:h-[420px] relative z-10">
                 
                 {/* Popups Overlay */}
                 <div className="absolute top-4 right-4 left-4 z-50 flex flex-col gap-2 items-center pointer-events-none">
@@ -203,9 +215,13 @@ export const Hero: React.FC = () => {
                 {/* Left Sidebar */}
                 <div className="col-span-2 border-r border-white/5 bg-black/40 hidden md:flex flex-col justify-between p-2">
                    <div className="space-y-1">
-                      {['Queue', 'Admit', 'Vitals', 'Staff'].map((item, i) => {
+                      {['Overview', 'Queue', 'Admit', 'Vitals', 'Staff'].map((item, i) => {
                         // Highlight active nav based on phase
-                        const isActive = (phase === 'QUEUE' && i === 0) || (phase !== 'QUEUE' && i === 1);
+                        const isActive = 
+                          (phase === 'OVERVIEW' && item === 'Overview') ||
+                          (phase === 'QUEUE' && item === 'Queue') ||
+                          ((phase === 'ADMISSION' || phase === 'OFFLINE' || phase === 'SYNC') && item === 'Admit');
+                          
                         return (
                           <div key={item} className={`p-2 rounded transition-all flex flex-col items-center gap-1 ${isActive ? 'bg-white/10 text-white' : 'text-[#52525B]'}`}>
                              <div className={`w-1 h-1 rounded-full ${isActive ? 'bg-blue-500' : 'bg-transparent'}`}></div>
@@ -222,11 +238,119 @@ export const Hero: React.FC = () => {
                 </div>
 
                 {/* Center Content Area - Dynamic */}
-                <div className="col-span-12 md:col-span-10 p-6 bg-[#050505] relative overflow-hidden flex flex-col">
+                <div className="col-span-12 md:col-span-10 p-6 bg-[#050505]/80 relative overflow-hidden flex flex-col">
                    <div className="bg-noise absolute inset-0 opacity-20 pointer-events-none"></div>
                    
                    <AnimatePresence mode="wait">
-                      {phase === 'QUEUE' ? (
+                      {phase === 'OVERVIEW' ? (
+                        <motion.div 
+                           key="overview"
+                           initial={{ opacity: 0, x: 20 }}
+                           animate={{ opacity: 1, x: 0 }}
+                           exit={{ opacity: 0, x: -20 }}
+                           className="flex-1 flex flex-col"
+                        >
+                           <div className="flex justify-between items-center mb-6">
+                              <div>
+                                 <h3 className="text-lg font-bold text-white mb-1">Facility Operations</h3>
+                                 <p className="text-xs text-[#71717A]">General Hospital • Level 1 Trauma</p>
+                              </div>
+                              <div className="flex gap-2">
+                                 <span className="px-2 py-1 rounded bg-emerald-500/10 text-emerald-500 text-[10px] font-mono border border-emerald-500/20">CAPACITY_OK</span>
+                              </div>
+                           </div>
+
+                           {/* Metrics Grid */}
+                           <div className="grid grid-cols-3 gap-4 mb-6">
+                               <div className="p-3 bg-[#111] rounded border border-[#262626]">
+                                   <div className="flex items-center justify-between mb-1">
+                                      <div className="text-[10px] text-[#52525B] uppercase">Census</div>
+                                      <Users size={12} className="text-[#52525B]" />
+                                   </div>
+                                   <div className="text-xl font-mono text-white">142</div>
+                                   <div className="text-[9px] text-emerald-500 mt-1">↑ 12% vs 24h</div>
+                               </div>
+                               <div className="p-3 bg-[#111] rounded border border-[#262626]">
+                                   <div className="flex items-center justify-between mb-1">
+                                      <div className="text-[10px] text-[#52525B] uppercase">Avg Wait</div>
+                                      <Clock size={12} className="text-[#52525B]" />
+                                   </div>
+                                   <div className="text-xl font-mono text-white">18m</div>
+                                   <div className="text-[9px] text-emerald-500 mt-1">-4m vs avg</div>
+                               </div>
+                               <div className="p-3 bg-[#111] rounded border border-[#262626]">
+                                   <div className="flex items-center justify-between mb-1">
+                                      <div className="text-[10px] text-[#52525B] uppercase">Diverted</div>
+                                      <AlertTriangle size={12} className="text-[#52525B]" />
+                                   </div>
+                                   <div className="text-xl font-mono text-white">0</div>
+                                   <div className="text-[9px] text-[#52525B] mt-1">Normal Ops</div>
+                               </div>
+                           </div>
+
+                           {/* Occupancy Bars */}
+                           <div className="space-y-4 mb-4">
+                                <div className="space-y-1">
+                                   <div className="flex justify-between text-[10px] uppercase text-[#52525B] font-mono">
+                                      <span>ER Occupancy</span>
+                                      <span>28 / 32</span>
+                                   </div>
+                                   <div className="h-1.5 w-full bg-[#111] rounded-full overflow-hidden">
+                                      <motion.div 
+                                        initial={{ width: 0 }} 
+                                        animate={{ width: '87%' }} 
+                                        transition={{ duration: 1 }} 
+                                        className="h-full bg-blue-500" 
+                                      />
+                                   </div>
+                                </div>
+                                <div className="space-y-1">
+                                   <div className="flex justify-between text-[10px] uppercase text-[#52525B] font-mono">
+                                      <span>ICU Capacity</span>
+                                      <span>4 / 8</span>
+                                   </div>
+                                   <div className="h-1.5 w-full bg-[#111] rounded-full overflow-hidden">
+                                      <motion.div 
+                                        initial={{ width: 0 }} 
+                                        animate={{ width: '50%' }} 
+                                        transition={{ duration: 1 }} 
+                                        className="h-full bg-emerald-500" 
+                                      />
+                                   </div>
+                                </div>
+                                <div className="space-y-1">
+                                   <div className="flex justify-between text-[10px] uppercase text-[#52525B] font-mono">
+                                      <span>Inpatient Ward</span>
+                                      <span>42 / 60</span>
+                                   </div>
+                                   <div className="h-1.5 w-full bg-[#111] rounded-full overflow-hidden">
+                                      <motion.div 
+                                        initial={{ width: 0 }} 
+                                        animate={{ width: '70%' }} 
+                                        transition={{ duration: 1 }} 
+                                        className="h-full bg-blue-500" 
+                                      />
+                                   </div>
+                                </div>
+                           </div>
+                           
+                           {/* Activity Feed Snippet */}
+                           <div className="mt-auto border-t border-[#262626] pt-2">
+                              <div className="text-[10px] font-mono text-[#52525B] mb-2 uppercase">Recent Activity</div>
+                              <div className="space-y-2">
+                                 <div className="flex justify-between items-center text-[10px]">
+                                    <span className="text-[#A1A1AA]">Patient 8921 Admitted to ER-4</span>
+                                    <span className="text-[#52525B]">2m ago</span>
+                                 </div>
+                                 <div className="flex justify-between items-center text-[10px]">
+                                    <span className="text-[#A1A1AA]">Lab Results Ready: J. Doe</span>
+                                    <span className="text-[#52525B]">5m ago</span>
+                                 </div>
+                              </div>
+                           </div>
+
+                        </motion.div>
+                      ) : phase === 'QUEUE' ? (
                         <motion.div 
                            key="queue"
                            initial={{ opacity: 0, x: 20 }}
