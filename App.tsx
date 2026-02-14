@@ -5,18 +5,19 @@ import { Layout } from './components/Layout';
 import { LoadingScreen } from './components/ui/LoadingScreen';
 import { ErrorBoundary } from './components/ErrorBoundary';
 
-// Eager load Home for instant LCP (Largest Contentful Paint)
+// --- Eager Load Core Pages (Critical Path) ---
+// This prevents "stuck loading" states for the main navigation
 import { Home } from './pages/Home';
+import { Product } from './pages/Product';
+import { Technology } from './pages/Technology';
+import { Security } from './pages/Security';
+import { About } from './pages/About';
+import { Contact } from './pages/Contact';
 
-// Lazy load other pages for performance optimization
-const Product = lazy(() => import('./pages/Product').then(module => ({ default: module.Product })));
-const Security = lazy(() => import('./pages/Security').then(module => ({ default: module.Security })));
-const Technology = lazy(() => import('./pages/Technology').then(module => ({ default: module.Technology })));
-const About = lazy(() => import('./pages/About').then(module => ({ default: module.About })));
+// --- Lazy Load Secondary Pages ---
 const RequestDemo = lazy(() => import('./pages/RequestDemo').then(module => ({ default: module.RequestDemo })));
 const Insights = lazy(() => import('./pages/Insights').then(module => ({ default: module.Insights })));
 const Article = lazy(() => import('./pages/Article').then(module => ({ default: module.Article }))); 
-const Contact = lazy(() => import('./pages/Contact').then(module => ({ default: module.Contact })));
 const Migration = lazy(() => import('./pages/Migration').then(module => ({ default: module.Migration })));
 const NotFound = lazy(() => import('./pages/NotFound').then(module => ({ default: module.NotFound })));
 const Admin = lazy(() => import('./pages/Admin').then(module => ({ default: module.Admin })));
@@ -39,17 +40,18 @@ function App() {
         <Layout>
           <Suspense fallback={<LoadingScreen />}>
             <Routes>
-              {/* Home is now rendered directly, no suspense fallback for the main route */}
+              {/* Core Routes (Instant Load) */}
               <Route path="/" element={<Home />} />
-              
               <Route path="/product" element={<Product />} />
-              <Route path="/security" element={<Security />} />
               <Route path="/technology" element={<Technology />} />
+              <Route path="/security" element={<Security />} />
               <Route path="/about" element={<About />} />
+              <Route path="/contact" element={<Contact />} />
+              
+              {/* Secondary Routes (Lazy Load) */}
               <Route path="/request-demo" element={<RequestDemo />} />
               <Route path="/insights" element={<Insights />} />
               <Route path="/insights/:slug" element={<Article />} />
-              <Route path="/contact" element={<Contact />} />
               <Route path="/migration" element={<Migration />} />
               <Route path="/admin" element={<Admin />} />
               

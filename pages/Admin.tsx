@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Container } from '../components/ui/Container';
 import { Button } from '../components/ui/Button';
@@ -50,14 +51,20 @@ const LoginScreen = ({ onLogin }: { onLogin: () => void }) => {
     setLoading(true);
     setError(false);
     
-    // Simulate server-side check via API abstraction
-    const isValid = await api.verifyAdminPassword(pass);
-    
-    setLoading(false);
-    if (isValid) {
-      onLogin();
-    } else {
+    try {
+      // Simulate server-side check via API abstraction
+      const isValid = await api.verifyAdminPassword(pass);
+      
+      if (isValid) {
+        onLogin();
+      } else {
+        setError(true);
+      }
+    } catch (err) {
+      console.error("Auth Error:", err);
       setError(true);
+    } finally {
+      setLoading(false);
     }
   };
 
