@@ -1,15 +1,43 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { motion, useScroll, useTransform, useSpring, useMotionValue, AnimatePresence } from 'framer-motion';
-import { Database, Activity, Users, Clock, ArrowUpRight, Wifi, WifiOff, AlertTriangle, ShieldCheck, HeartPulse, Battery, Server } from 'lucide-react';
+import { Database, Activity, Users, Clock, ArrowUpRight, Wifi, WifiOff, AlertTriangle, ShieldCheck, UserPlus, CheckCircle2, Cloud, RefreshCw } from 'lucide-react';
 import { Container } from './ui/Container';
 import { useNavigate } from 'react-router-dom';
+
+// Dashboard Simulation States
+type DashboardPhase = 'QUEUE' | 'ADMISSION' | 'OFFLINE' | 'SYNC';
 
 export const Hero: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollY } = useScroll();
-  const [networkState, setNetworkState] = useState<'online' | 'offline'>('online');
+  const [phase, setPhase] = useState<DashboardPhase>('QUEUE');
   const navigate = useNavigate();
   
+  // Simulation Loop
+  useEffect(() => {
+    const cycle = async () => {
+      // 1. Queue View (Start)
+      setPhase('QUEUE');
+      await new Promise(r => setTimeout(r, 4000));
+      
+      // 2. Admission View
+      setPhase('ADMISSION');
+      await new Promise(r => setTimeout(r, 3000));
+      
+      // 3. Offline Event (while in admission)
+      setPhase('OFFLINE');
+      await new Promise(r => setTimeout(r, 3500));
+      
+      // 4. Sync Event (while in admission)
+      setPhase('SYNC');
+      await new Promise(r => setTimeout(r, 3000));
+      
+      // Loop
+      cycle();
+    };
+    cycle();
+  }, []);
+
   // Mouse tracking for interactive spotlight
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -49,6 +77,12 @@ export const Hero: React.FC = () => {
       transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] }
     }
   };
+
+  // Derived state for UI elements
+  const isOffline = phase === 'OFFLINE';
+  const isSyncing = phase === 'SYNC';
+  const networkStatusColor = isOffline ? 'text-amber-400 bg-amber-500/10 border-amber-500/20' : 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20';
+  const statusLabel = isOffline ? 'MESH_FALLBACK' : isSyncing ? 'UPLINK_SYNCING' : 'UPLINK_STABLE';
 
   return (
     <div ref={containerRef} className="relative pt-28 pb-16 md:pt-32 md:pb-20 lg:pt-40 lg:pb-32 overflow-hidden bg-[#050505] min-h-screen flex flex-col justify-center">
@@ -90,13 +124,13 @@ export const Hero: React.FC = () => {
             className="w-full lg:w-3/5 order-2 lg:order-1 relative perspective-[2000px] group"
           >
             {/* Holographic Glow */}
-            <div className="absolute -inset-1 bg-gradient-to-b from-blue-500/10 via-hosp-gold/5 to-transparent blur-3xl opacity-40 rounded-[2rem] group-hover:opacity-60 transition-opacity duration-700"></div>
+            <div className={`absolute -inset-1 bg-gradient-to-b transition-colors duration-1000 blur-3xl opacity-40 rounded-[2rem] group-hover:opacity-60 ${isOffline ? 'from-amber-500/10 via-red-500/5' : 'from-blue-500/10 via-hosp-gold/5'} to-transparent`}></div>
             
             {/* Main Interface Frame */}
             <div className="rounded-xl border border-white/10 bg-[#0A0A0A]/80 backdrop-blur-xl shadow-[0_0_0_1px_rgba(255,255,255,0.05),0_50px_100px_-20px_rgba(0,0,0,0.5)] overflow-hidden relative ring-1 ring-white/5">
               
               {/* Header: Network Status & Controls */}
-              <div className="h-10 border-b border-white/5 bg-white/[0.02] flex items-center justify-between px-4">
+              <div className="h-10 border-b border-white/5 bg-white/[0.02] flex items-center justify-between px-4 relative z-20">
                  <div className="flex gap-4 items-center">
                    <div className="flex gap-1.5">
                      <div className="w-2.5 h-2.5 rounded-full bg-[#333] border border-white/10"></div>
@@ -106,38 +140,79 @@ export const Hero: React.FC = () => {
                    <div className="h-4 w-px bg-white/10 hidden sm:block"></div>
                    <div className="hidden sm:flex items-center gap-2 text-[10px] font-mono text-[#71717A]">
                       <ShieldCheck className="w-3 h-3 text-emerald-500" />
-                      <span className="tracking-wide">SECURE_ENCLAVE :: ACTIVE</span>
+                      <span className="tracking-wide">SECURE_ENCLAVE</span>
                    </div>
                  </div>
                  
                  <div className="flex items-center gap-3">
-                   <div className={`flex items-center gap-2 px-2 py-0.5 rounded border transition-all duration-500 ${
-                     networkState === 'online' 
-                       ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' 
-                       : 'bg-amber-500/10 border-amber-500/20 text-amber-400'
-                   }`}>
+                   <motion.div 
+                     key={statusLabel}
+                     initial={{ opacity: 0, y: -5 }}
+                     animate={{ opacity: 1, y: 0 }}
+                     className={`flex items-center gap-2 px-2 py-0.5 rounded border transition-all duration-500 ${networkStatusColor}`}
+                   >
                      <div className={`w-1.5 h-1.5 rounded-full transition-colors duration-500 ${
-                       networkState === 'online' ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'
+                       isOffline ? 'bg-amber-500' : isSyncing ? 'bg-blue-400 animate-pulse' : 'bg-emerald-500 animate-pulse'
                      }`}></div>
                      <span className="text-[9px] font-mono font-bold tracking-wide">
-                       {networkState === 'online' ? 'UPLINK_STABLE' : 'MESH_FALLBACK'}
+                       {statusLabel}
                      </span>
-                     {networkState === 'online' ? <Wifi size={10} /> : <WifiOff size={10} />}
-                   </div>
+                     {isOffline ? <WifiOff size={10} /> : isSyncing ? <RefreshCw size={10} className="animate-spin" /> : <Wifi size={10} />}
+                   </motion.div>
                  </div>
               </div>
 
               {/* Main Workspace */}
-              <div className="grid grid-cols-12 h-auto md:h-[450px]">
-                {/* Left Sidebar: Navigation - Hidden on Mobile */}
+              <div className="grid grid-cols-12 h-[380px] md:h-[420px] relative">
+                
+                {/* Popups Overlay */}
+                <div className="absolute top-4 right-4 left-4 z-50 flex flex-col gap-2 items-center pointer-events-none">
+                   <AnimatePresence>
+                      {isOffline && (
+                        <motion.div 
+                           initial={{ opacity: 0, y: -20, scale: 0.9 }}
+                           animate={{ opacity: 1, y: 0, scale: 1 }}
+                           exit={{ opacity: 0, y: -20, scale: 0.9 }}
+                           className="bg-amber-500/10 border border-amber-500/20 backdrop-blur-md text-amber-100 px-4 py-2 rounded-lg shadow-2xl flex items-center gap-3"
+                        >
+                           <WifiOff size={16} className="text-amber-500" />
+                           <div className="flex flex-col">
+                              <span className="text-xs font-bold">You are offline</span>
+                              <span className="text-[10px] opacity-80">Switched to local storage. 0ms latency.</span>
+                           </div>
+                        </motion.div>
+                      )}
+                      {isSyncing && (
+                        <motion.div 
+                           initial={{ opacity: 0, y: -20, scale: 0.9 }}
+                           animate={{ opacity: 1, y: 0, scale: 1 }}
+                           exit={{ opacity: 0, y: -20, scale: 0.9 }}
+                           className="bg-blue-500/10 border border-blue-500/20 backdrop-blur-md text-blue-100 px-4 py-2 rounded-lg shadow-2xl flex items-center gap-3"
+                        >
+                           <Cloud size={16} className="text-blue-400" />
+                           <div className="flex flex-col">
+                              <span className="text-xs font-bold">Connection Restored</span>
+                              <span className="text-[10px] opacity-80">Syncing pending records to cloud...</span>
+                           </div>
+                           <RefreshCw size={14} className="text-blue-400 animate-spin ml-2" />
+                        </motion.div>
+                      )}
+                   </AnimatePresence>
+                </div>
+
+                {/* Left Sidebar */}
                 <div className="col-span-2 border-r border-white/5 bg-black/40 hidden md:flex flex-col justify-between p-2">
                    <div className="space-y-1">
-                      {['Overview', 'Vitals', 'Patients', 'Staff', 'Pharm'].map((item, i) => (
-                        <div key={item} className={`p-2 rounded cursor-pointer transition-all flex flex-col items-center gap-1 ${i === 0 ? 'bg-white/10 text-white' : 'text-[#52525B] hover:text-white hover:bg-white/5'}`}>
-                           <div className={`w-1 h-1 rounded-full ${i === 0 ? 'bg-blue-500' : 'bg-transparent'}`}></div>
-                           <span className="text-[9px] font-mono uppercase tracking-wider">{item}</span>
-                        </div>
-                      ))}
+                      {['Queue', 'Admit', 'Vitals', 'Staff'].map((item, i) => {
+                        // Highlight active nav based on phase
+                        const isActive = (phase === 'QUEUE' && i === 0) || (phase !== 'QUEUE' && i === 1);
+                        return (
+                          <div key={item} className={`p-2 rounded transition-all flex flex-col items-center gap-1 ${isActive ? 'bg-white/10 text-white' : 'text-[#52525B]'}`}>
+                             <div className={`w-1 h-1 rounded-full ${isActive ? 'bg-blue-500' : 'bg-transparent'}`}></div>
+                             <span className="text-[9px] font-mono uppercase tracking-wider">{item}</span>
+                          </div>
+                        )
+                      })}
                    </div>
                    <div className="flex flex-col items-center gap-2 p-2">
                       <div className="w-6 h-6 rounded border border-white/10 flex items-center justify-center text-[#52525B]">
@@ -146,118 +221,155 @@ export const Hero: React.FC = () => {
                    </div>
                 </div>
 
-                {/* Center Panel: Data Density */}
-                <div className="col-span-12 md:col-span-10 p-4 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-100">
+                {/* Center Content Area - Dynamic */}
+                <div className="col-span-12 md:col-span-10 p-6 bg-[#050505] relative overflow-hidden flex flex-col">
+                   <div className="bg-noise absolute inset-0 opacity-20 pointer-events-none"></div>
                    
-                   {/* Top Stats Row - Stacks on mobile */}
-                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
-                      <div className="bg-[#111] border border-[#262626] rounded p-3 relative overflow-hidden group">
-                         <div className="absolute top-0 right-0 p-1 opacity-20 group-hover:opacity-100 transition-opacity"><ArrowUpRight size={10} className="text-white"/></div>
-                         <div className="text-[9px] font-mono text-[#71717A] uppercase mb-1">Demo Census</div>
-                         <div className="text-xl font-mono text-white">842 <span className="text-[10px] text-emerald-500">+12%</span></div>
-                         <div className="w-full bg-[#262626] h-0.5 mt-2 rounded-full overflow-hidden">
-                            <div className="bg-blue-500 h-full w-[85%]"></div>
-                         </div>
-                      </div>
-                      <div className="bg-[#111] border border-[#262626] rounded p-3">
-                         <div className="text-[9px] font-mono text-[#71717A] uppercase mb-1">Critical Care</div>
-                         <div className="text-xl font-mono text-white flex items-center gap-2">
-                            28 <span className="px-1 py-0.5 bg-red-500/20 text-red-500 text-[8px] rounded border border-red-500/30">HIGH</span>
-                         </div>
-                         <div className="w-full bg-[#262626] h-0.5 mt-2 rounded-full overflow-hidden">
-                            <div className="bg-red-500 h-full w-[45%]"></div>
-                         </div>
-                      </div>
-                      <div className="bg-[#111] border border-[#262626] rounded p-3">
-                         <div className="text-[9px] font-mono text-[#71717A] uppercase mb-1">Avg Wait</div>
-                         <div className="text-xl font-mono text-white">14m <span className="text-[10px] text-emerald-500">▼ 2m</span></div>
-                         <div className="w-full bg-[#262626] h-0.5 mt-2 rounded-full overflow-hidden">
-                            <div className="bg-emerald-500 h-full w-[92%]"></div>
-                         </div>
-                      </div>
-                   </div>
+                   <AnimatePresence mode="wait">
+                      {phase === 'QUEUE' ? (
+                        <motion.div 
+                           key="queue"
+                           initial={{ opacity: 0, x: 20 }}
+                           animate={{ opacity: 1, x: 0 }}
+                           exit={{ opacity: 0, x: -20 }}
+                           className="flex-1 flex flex-col"
+                        >
+                           <div className="flex justify-between items-center mb-6">
+                              <div>
+                                 <h3 className="text-lg font-bold text-white mb-1">Visit & Queue Management</h3>
+                                 <p className="text-xs text-[#71717A]">Emergency Dept • Zone A</p>
+                              </div>
+                              <div className="flex gap-4">
+                                 <div className="text-right">
+                                    <div className="text-[10px] text-[#52525B] uppercase">Waiting</div>
+                                    <div className="text-xl font-mono text-white">14</div>
+                                 </div>
+                                 <div className="text-right">
+                                    <div className="text-[10px] text-[#52525B] uppercase">Avg Time</div>
+                                    <div className="text-xl font-mono text-emerald-500">12m</div>
+                                 </div>
+                              </div>
+                           </div>
 
-                   {/* Map & Alerts Grid - Adapts height on mobile */}
-                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 h-auto sm:h-[280px]">
-                      {/* Bed Map Visualization */}
-                      <div className="col-span-1 sm:col-span-2 bg-[#0F0F0F] border border-[#262626] rounded p-3 relative overflow-hidden min-h-[200px]">
-                         <div className="flex justify-between items-center mb-3">
-                            <span className="text-[10px] font-mono text-[#A1A1AA] uppercase">Unit A4 Map</span>
-                            <div className="flex gap-2">
-                               <div className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-sm bg-blue-900 border border-blue-500"></div><span className="text-[8px] text-[#52525B]">OCC</span></div>
-                               <div className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-sm bg-[#1A1A1A] border border-[#333]"></div><span className="text-[8px] text-[#52525B]">VAC</span></div>
-                            </div>
-                         </div>
-                         
-                         {/* The Spatial Grid */}
-                         <div className="grid grid-cols-6 gap-2 opacity-80">
-                            {Array.from({ length: 18 }).map((_, i) => (
-                               <div key={i} className={`aspect-square rounded-sm border relative group transition-all duration-300 ${
-                                  [2, 5, 11, 14].includes(i) ? 'bg-[#1A1A1A] border-[#333]' : 'bg-blue-900/10 border-blue-500/30 hover:bg-blue-500/20'
-                               }`}>
-                                  {![2, 5, 11, 14].includes(i) && (
-                                     <div className="absolute inset-0 flex items-center justify-center">
-                                        <Users size={8} className="text-blue-500 opacity-60 group-hover:opacity-100" />
-                                     </div>
-                                  )}
-                                  <div className="hidden sm:block absolute bottom-0.5 right-0.5 text-[6px] font-mono text-[#333] group-hover:text-[#71717A]">
-                                     A4-{i+1}
-                                  </div>
-                               </div>
-                            ))}
-                         </div>
-                         
-                         {/* Scanning Line Effect */}
-                         <div className="absolute top-0 left-0 w-full h-1 bg-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.5)] animate-[scan_4s_linear_infinite] pointer-events-none"></div>
-                      </div>
+                           {/* Queue Table */}
+                           <div className="flex-1 border border-[#262626] rounded-lg overflow-hidden bg-[#0A0A0A]">
+                              <div className="grid grid-cols-4 bg-[#111] p-3 text-[10px] font-mono text-[#52525B] uppercase tracking-wider border-b border-[#262626]">
+                                 <div>Patient</div>
+                                 <div>Complaint</div>
+                                 <div>Triage</div>
+                                 <div className="text-right">Wait</div>
+                              </div>
+                              <div className="divide-y divide-[#1F1F1F]">
+                                 {[
+                                    { name: "Okonkwo, C.", issue: "Chest Pain", score: 1, time: "2m", status: "Critical" },
+                                    { name: "Adeyemi, T.", issue: "Febrile", score: 3, time: "15m", status: "Stable" },
+                                    { name: "Diallo, M.", issue: "Laceration", score: 4, time: "22m", status: "Stable" },
+                                    { name: "Mensah, K.", issue: "Migraine", score: 3, time: "45m", status: "Stable" },
+                                 ].map((p, i) => (
+                                    <motion.div 
+                                      key={i}
+                                      initial={{ opacity: 0, y: 10 }}
+                                      animate={{ opacity: 1, y: 0 }}
+                                      transition={{ delay: i * 0.1 }}
+                                      className="grid grid-cols-4 p-3 text-xs items-center hover:bg-[#111]"
+                                    >
+                                       <div className="font-medium text-white">{p.name}</div>
+                                       <div className="text-[#A1A1AA]">{p.issue}</div>
+                                       <div>
+                                          <span className={`px-1.5 py-0.5 rounded text-[9px] font-mono ${p.score === 1 ? 'bg-red-500/20 text-red-400' : 'bg-blue-500/20 text-blue-400'}`}>
+                                             ESI-{p.score}
+                                          </span>
+                                       </div>
+                                       <div className="text-right font-mono text-[#71717A]">{p.time}</div>
+                                    </motion.div>
+                                 ))}
+                              </div>
+                           </div>
+                        </motion.div>
+                      ) : (
+                        <motion.div 
+                           key="admission"
+                           initial={{ opacity: 0, x: 20 }}
+                           animate={{ opacity: 1, x: 0 }}
+                           exit={{ opacity: 0, x: -20 }}
+                           className="flex-1 flex flex-col"
+                        >
+                           <div className="flex justify-between items-center mb-6">
+                              <div>
+                                 <h3 className="text-lg font-bold text-white mb-1">New Admission</h3>
+                                 <p className="text-xs text-[#71717A]">Create Patient Record</p>
+                              </div>
+                              <div className="w-8 h-8 rounded bg-blue-500/10 flex items-center justify-center text-blue-500">
+                                 <UserPlus size={16} />
+                              </div>
+                           </div>
 
-                      {/* Right Column: Live Feed & Alerts */}
-                      <div className="col-span-1 flex flex-col gap-3">
-                         {/* Network Graph Simulation */}
-                         <div className="flex-1 bg-[#0F0F0F] border border-[#262626] rounded p-3 relative overflow-hidden min-h-[80px]">
-                            <div className="flex justify-between items-center mb-2">
-                               <span className="text-[10px] font-mono text-[#A1A1AA]">LATENCY</span>
-                               <span className="text-[10px] font-mono text-emerald-500">12ms</span>
-                            </div>
-                            <div className="flex items-end gap-0.5 h-12 sm:h-16 w-full">
-                               {Array.from({ length: 20 }).map((_, i) => (
-                                  <motion.div 
-                                    key={i}
-                                    animate={{ height: [10, Math.random() * 40 + 10, 10] }}
-                                    transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.05 }}
-                                    className="flex-1 bg-blue-500/20 rounded-t-sm"
-                                  ></motion.div>
-                               ))}
-                            </div>
-                         </div>
+                           <div className="space-y-4 max-w-md">
+                              <div className="grid grid-cols-2 gap-4">
+                                 <div className="space-y-1">
+                                    <label className="text-[10px] text-[#52525B] uppercase">First Name</label>
+                                    <div className="h-9 bg-[#111] border border-[#262626] rounded px-3 flex items-center text-sm text-white">
+                                       <motion.span
+                                          initial={{ opacity: 0 }}
+                                          animate={{ opacity: 1 }}
+                                          transition={{ delay: 0.5 }}
+                                       >
+                                          Ibrahim
+                                       </motion.span>
+                                       <motion.div 
+                                          animate={{ opacity: [0, 1] }} 
+                                          transition={{ repeat: 3, duration: 0.8 }} 
+                                          className="w-0.5 h-4 bg-blue-500 ml-0.5" 
+                                       />
+                                    </div>
+                                 </div>
+                                 <div className="space-y-1">
+                                    <label className="text-[10px] text-[#52525B] uppercase">Last Name</label>
+                                    <div className="h-9 bg-[#111] border border-[#262626] rounded px-3 flex items-center text-sm text-white">
+                                       <motion.span
+                                          initial={{ opacity: 0 }}
+                                          animate={{ opacity: 1 }}
+                                          transition={{ delay: 1 }}
+                                       >
+                                          Suleiman
+                                       </motion.span>
+                                    </div>
+                                 </div>
+                              </div>
 
-                         {/* Alerts List */}
-                         <div className="flex-1 bg-[#0F0F0F] border border-[#262626] rounded p-3 overflow-hidden min-h-[100px]">
-                            <div className="flex justify-between items-center mb-2">
-                               <span className="text-[10px] font-mono text-[#A1A1AA]">ALERTS</span>
-                               <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
-                            </div>
-                            <div className="space-y-1.5">
-                               <div className="p-1.5 rounded bg-red-500/10 border border-red-500/20 flex items-center gap-2">
-                                  <AlertTriangle size={10} className="text-red-500" />
-                                  <div className="text-[8px] text-red-200">CODE BLUE • BED 4</div>
-                               </div>
-                               <div className="p-1.5 rounded bg-amber-500/10 border border-amber-500/20 flex items-center gap-2">
-                                  <Battery size={10} className="text-amber-500" />
-                                  <div className="text-[8px] text-amber-200">UPS POWER • LAB 2</div>
-                               </div>
-                            </div>
-                         </div>
-                      </div>
-                   </div>
+                              <div className="space-y-1">
+                                 <label className="text-[10px] text-[#52525B] uppercase">Chief Complaint</label>
+                                 <div className="h-20 bg-[#111] border border-[#262626] rounded p-3 text-sm text-white">
+                                    <motion.span
+                                       initial={{ opacity: 0 }}
+                                       animate={{ opacity: 1 }}
+                                       transition={{ delay: 1.5 }}
+                                    >
+                                       Patient reporting acute abdominal pain (RLQ). Potential appendicitis.
+                                    </motion.span>
+                                 </div>
+                              </div>
+
+                              <div className="pt-2 flex gap-3">
+                                 <button className="flex-1 h-9 bg-[#EDEDED] text-black font-medium rounded text-xs hover:bg-white transition-colors">
+                                    {isOffline ? 'Save to Device (Local)' : isSyncing ? 'Syncing...' : 'Admit Patient'}
+                                 </button>
+                                 <button className="h-9 px-4 border border-[#333] text-[#A1A1AA] rounded text-xs hover:text-white">Cancel</button>
+                              </div>
+                           </div>
+                        </motion.div>
+                      )}
+                   </AnimatePresence>
                    
                    {/* Footer Status */}
-                   <div className="mt-4 flex items-center justify-between border-t border-[#262626] pt-2">
+                   <div className="mt-auto flex items-center justify-between border-t border-[#262626] pt-3">
                       <div className="flex gap-4">
-                         <div className="text-[9px] font-mono text-[#52525B]">CPU: 14%</div>
-                         <div className="text-[9px] font-mono text-[#52525B]">MEM: 2.1GB</div>
+                         <div className="text-[9px] font-mono text-[#52525B]">DB: SQLITE_WASM</div>
+                         <div className="text-[9px] font-mono text-[#52525B]">
+                            {isOffline ? 'PENDING_WRITES: 4' : 'SYNCED: OK'}
+                         </div>
                       </div>
-                      <div className="text-[9px] font-mono text-[#333]">V2.4.0-RC4 // LAGOS_NODE</div>
+                      <div className="text-[9px] font-mono text-[#333]">V2.4.0-RC4</div>
                    </div>
 
                 </div>
