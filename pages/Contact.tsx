@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Container } from '../components/ui/Container';
 import { Button } from '../components/ui/Button';
-import { Mail, MapPin, Phone, Globe, MessageSquare, Check, AlertTriangle, Send, ArrowRight } from 'lucide-react';
+import { Mail, MapPin, Phone, Globe, MessageSquare, Check, AlertTriangle, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export const Contact: React.FC = () => {
@@ -39,22 +39,22 @@ Department: ${formData.department}
 Message:
 ${sanitizedMessage}`;
 
-    // Record interaction for Admin (Simulated)
+    // 1. Persist to Local Storage (The "Database")
     try {
-        const existingLeads = JSON.parse(localStorage.getItem('hospintel_leads') || '[]');
-        const newLead = {
-            id: Date.now().toString(),
-            name: `${formData.firstName} ${formData.lastName}`,
-            email: formData.email,
-            type: formData.department,
-            status: 'New',
-            timestamp: new Date().toISOString()
+        const existingContacts = JSON.parse(localStorage.getItem('hospintel_db_inquiries') || '[]');
+        const newContact = {
+            id: crypto.randomUUID(),
+            ...formData,
+            status: 'NEW',
+            timestamp: new Date().toISOString(),
+            source: 'CONTACT_FORM'
         };
-        localStorage.setItem('hospintel_leads', JSON.stringify([newLead, ...existingLeads]));
+        localStorage.setItem('hospintel_db_inquiries', JSON.stringify([newContact, ...existingContacts]));
     } catch (e) {
-        // Silent fail for storage limits
+        console.error("Storage limit reached", e);
     }
 
+    // 2. Trigger Mail Client
     window.location.href = `mailto:inquiries.hospintel@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     
     setIsSubmitted(true);
@@ -164,7 +164,7 @@ ${sanitizedMessage}`;
                             </motion.div>
                             <h3 className="text-2xl font-bold text-white mb-4">Transmission Initiated</h3>
                             <p className="text-[#A1A1AA] mb-10 max-w-sm mx-auto leading-relaxed">
-                               We have opened your default email client with a secure draft addressed to <strong>inquiries.hospintel@gmail.com</strong>.
+                               We have recorded your inquiry and opened your default email client with a secure draft addressed to <strong>inquiries.hospintel@gmail.com</strong>.
                             </p>
                             <Button variant="outline" onClick={() => setIsSubmitted(false)} className="mx-auto">
                                 Reset Communication

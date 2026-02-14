@@ -159,10 +159,10 @@ export const Security: React.FC = () => {
            <div className="flex flex-col md:flex-row items-center justify-between gap-8">
               <div>
                  <h3 className="text-lg font-bold text-white mb-1">Compliance Standards</h3>
-                 <p className="text-sm text-[#71717A]">Audited and verified for healthcare operations.</p>
+                 <p className="text-sm text-[#71717A]">Engineered to align with global healthcare data standards.</p>
               </div>
               <div className="flex flex-wrap gap-4">
-                 {['HIPAA', 'SOC 2 TYPE II', 'GDPR', 'HITECH', 'ISO 27001'].map((tag) => (
+                 {['HIPAA', 'SOC 2', 'GDPR', 'HITECH', 'ISO 27001'].map((tag) => (
                     <span key={tag} className="px-3 py-1.5 rounded bg-[#111] border border-[#262626] text-xs font-mono text-[#A1A1AA] hover:text-white hover:border-[#404040] transition-colors cursor-default">
                        {tag}_READY
                     </span>

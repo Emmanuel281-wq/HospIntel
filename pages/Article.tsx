@@ -42,9 +42,9 @@ const ARTICLES: Record<string, any> = {
           <div>5. Result: Digital Twin is now inaccurate</div>
         </div>
 
-        <h3>Embracing Eventual Consistency</h3>
+        <h3>Embracing Hybrid Resiliency</h3>
         <p>
-          HospIntel is built as an <strong>AP (Available + Partition Tolerant)</strong> system. We utilize Conflict-Free Replicated Data Types (CRDTs) to ensure that every node can accept writes at any time, regardless of network status.
+          HospIntel is built as an <strong>AP (Available + Partition Tolerant)</strong> system. We utilize Conflict-Free Replicated Data Types (CRDTs) to ensure that every node can accept writes at any time, switching to local storage when the network fails.
         </p>
         <p>
           When the network heals, our sync engine merges the divergent states. Because medical data is largely additive (append-only logs of events), true conflicts are rarer than in financial ledgers. When they do occur (e.g., two doctors changing a prescription simultaneously), we use Last-Write-Wins (LWW) with semantic merging rules that flag the conflict for human review without blocking the database.
@@ -52,15 +52,15 @@ const ARTICLES: Record<string, any> = {
 
         <h3>Architecture of Resilience</h3>
         <p>
-          We moved the "Source of Truth" from the server to the edge. Every HospIntel tablet runs a full SQLite instance. The "Cloud" is merely a peer that eventually receives the data, not the gatekeeper of it.
+          We employ an adaptive "Source of Truth" model. While the cloud is the ultimate authority, the local device acts as a fully functional failover node.
         </p>
         <ul className="list-disc pl-5 space-y-2 marker:text-blue-500">
-            <li><strong>Local Reads:</strong> 0ms latency. No network round-trip.</li>
-            <li><strong>Local Writes:</strong> Immediate persistence to disk.</li>
-            <li><strong>Background Sync:</strong> Data trickles up when bandwidth permits.</li>
+            <li><strong>Failover Writes:</strong> Immediate persistence to disk if cloud is unreachable.</li>
+            <li><strong>Automatic Sync:</strong> Data trickles up when bandwidth permits.</li>
+            <li><strong>Continuous Availability:</strong> The UI remains responsive during network transitions.</li>
         </ul>
         <p>
-          By choosing Availability, we ensure that the software never becomes the bottleneck in patient care. The hospital runs, even when the internet doesn't.
+          By implementing intelligent network switching, we ensure that the software never becomes the bottleneck in patient care. The hospital runs, even when the internet doesn't.
         </p>
       </>
     )
@@ -261,7 +261,7 @@ const ARTICLES: Record<string, any> = {
             The standard web development stack (React + JSON API + Postgres) is fundamentally flawed for mission-critical apps. It assumes the server is the brain and the client is a dumb terminal.
         </p>
 
-        <h3>The Local-First Paradigm</h3>
+        <h3>The Hybrid Edge Paradigm</h3>
         <p>
             We use SQLite (specifically, a WASM build) as the application file format. When a user logs in, they aren't fetching rows; they are mounting a database.
         </p>
@@ -385,7 +385,7 @@ export const Article: React.FC = () => {
                     <div className="p-6 rounded-xl bg-[#0A0A0A] border border-[#1F1F1F] mb-8">
                         <h4 className="text-sm font-bold text-white mb-4 uppercase tracking-wider">Related Topics</h4>
                         <div className="flex flex-wrap gap-2">
-                            {['Distributed Systems', 'Offline-First', 'CRDTs', 'Security', 'Healthcare'].map(t => (
+                            {['Distributed Systems', 'Hybrid-Cloud', 'CRDTs', 'Security', 'Healthcare'].map(t => (
                                 <span key={t} className="px-2 py-1 rounded bg-[#111] border border-[#262626] text-xs text-[#A1A1AA] hover:text-white hover:border-[#404040] transition-colors cursor-pointer">
                                     {t}
                                 </span>

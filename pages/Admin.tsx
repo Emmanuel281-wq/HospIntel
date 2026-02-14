@@ -2,20 +2,50 @@ import React, { useState, useEffect } from 'react';
 import { Container } from '../components/ui/Container';
 import { Button } from '../components/ui/Button';
 import { 
-  LayoutDashboard, Users, Cookie, 
+  LayoutDashboard, Users, MessageSquare, 
   BarChart3, RefreshCw, Lock, 
-  ArrowUpRight, Download, Search 
+  Download, Search, Trash2, Mail
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// --- Login Component ---
+// --- Types ---
+interface Lead {
+  id: string;
+  fullName: string;
+  organization: string;
+  role: string;
+  email: string;
+  phone: string;
+  facilities: string;
+  beds?: string;
+  deployment?: string;
+  message?: string;
+  timestamp: string;
+  status: string;
+  source: 'WEB_FORM';
+}
+
+interface Inquiry {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  department: string;
+  message: string;
+  timestamp: string;
+  status: string;
+  source: 'CONTACT_FORM';
+}
+
+// --- Login Component (Secure Gate) ---
 const LoginScreen = ({ onLogin }: { onLogin: () => void }) => {
   const [pass, setPass] = useState('');
   const [error, setError] = useState(false);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (pass === 'admin') { // Simple client-side gate for demo
+    // Updated Secure Key
+    if (pass === 'the_snake_to_the_fox') { 
       onLogin();
     } else {
       setError(true);
@@ -40,16 +70,16 @@ const LoginScreen = ({ onLogin }: { onLogin: () => void }) => {
                 type="password" 
                 value={pass}
                 onChange={(e) => setPass(e.target.value)}
-                placeholder="Enter access key"
+                placeholder="Access Key"
                 className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors text-sm"
                 autoFocus
              />
           </div>
-          {error && <p className="text-red-500 text-xs text-center">Invalid access key.</p>}
+          {error && <p className="text-red-500 text-xs text-center">Invalid access credentials.</p>}
           <Button className="w-full h-10">Authenticate</Button>
         </form>
         <div className="mt-6 text-center text-[10px] text-[#52525B] font-mono">
-           HOSPINTEL_ADMIN_GATEWAY // v2.4
+           HOSPINTEL_ADMIN_GATEWAY // v2.4 (SECURE)
         </div>
       </div>
     </div>
@@ -59,30 +89,82 @@ const LoginScreen = ({ onLogin }: { onLogin: () => void }) => {
 // --- Dashboard Component ---
 export const Admin: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [activeTab, setActiveTab] = useState<'overview' | 'leads'>('overview');
-  const [leads, setLeads] = useState<any[]>([]);
-  const [cookieStats, setCookieStats] = useState<any>(null);
+  const [activeTab, setActiveTab] = useState<'leads' | 'inquiries'>('leads');
+  const [leads, setLeads] = useState<Lead[]>([]);
+  const [inquiries, setInquiries] = useState<Inquiry[]>([]);
+  const [filter, setFilter] = useState('');
 
+  // Initial Data Load
   useEffect(() => {
-    // Load data from LocalStorage simulation
-    const loadedLeads = JSON.parse(localStorage.getItem('hospintel_demo_requests') || '[]');
-    setLeads(loadedLeads);
-    
-    // Cookie stats (Simulated + Real)
-    const currentConsent = localStorage.getItem('hospintel_cookie_consent');
-    setCookieStats({
-       totalVisitors: 1243, // Simulated base
-       consented: currentConsent ? 1 : 0, // Real check
-       functionalOptIn: currentConsent ? JSON.parse(currentConsent).functional : false
-    });
-  }, []);
+    if (isAuthenticated) {
+        refreshData();
+    }
+  }, [isAuthenticated]);
 
   const refreshData = () => {
-    const loadedLeads = JSON.parse(localStorage.getItem('hospintel_demo_requests') || '[]');
-    setLeads(loadedLeads);
+    try {
+        const storedLeads = JSON.parse(localStorage.getItem('hospintel_db_demos') || '[]');
+        const storedInquiries = JSON.parse(localStorage.getItem('hospintel_db_inquiries') || '[]');
+        setLeads(storedLeads);
+        setInquiries(storedInquiries);
+    } catch (e) {
+        console.error("Data corruption", e);
+    }
+  };
+
+  const handleDelete = (id: string, type: 'leads' | 'inquiries') => {
+    if (confirm('Are you sure you want to permanently delete this record?')) {
+        if (type === 'leads') {
+            const updated = leads.filter(l => l.id !== id);
+            setLeads(updated);
+            localStorage.setItem('hospintel_db_demos', JSON.stringify(updated));
+        } else {
+            const updated = inquiries.filter(i => i.id !== id);
+            setInquiries(updated);
+            localStorage.setItem('hospintel_db_inquiries', JSON.stringify(updated));
+        }
+    }
+  };
+
+  const exportToCSV = (data: any[], filename: string) => {
+    if (data.length === 0) return;
+    
+    // Get headers
+    const headers = Object.keys(data[0]).join(',');
+    
+    // Map rows (escape commas)
+    const rows = data.map(obj => {
+        return Object.values(obj).map(val => {
+            const str = String(val);
+            return `"${str.replace(/"/g, '""')}"`; // Escape quotes
+        }).join(',');
+    }).join('\n');
+
+    const csvContent = `${headers}\n${rows}`;
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `${filename}_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   if (!isAuthenticated) return <LoginScreen onLogin={() => setIsAuthenticated(true)} />;
+
+  // Filter Logic
+  const filteredLeads = leads.filter(l => 
+    l.organization.toLowerCase().includes(filter.toLowerCase()) || 
+    l.email.toLowerCase().includes(filter.toLowerCase()) ||
+    l.fullName.toLowerCase().includes(filter.toLowerCase())
+  );
+
+  const filteredInquiries = inquiries.filter(i => 
+    i.email.toLowerCase().includes(filter.toLowerCase()) || 
+    i.lastName.toLowerCase().includes(filter.toLowerCase())
+  );
 
   return (
     <div className="min-h-screen bg-[#050505] pt-24 pb-12 font-sans text-[#EDEDED]">
@@ -94,159 +176,206 @@ export const Admin: React.FC = () => {
                  <Lock className="w-3 h-3" />
                  <span>Secure Admin Environment</span>
                </div>
-               <h1 className="text-3xl font-bold text-white">Command Center</h1>
+               <h1 className="text-3xl font-bold text-white">Data Control Plane</h1>
             </div>
             <div className="flex items-center gap-3">
-               <span className="text-xs text-[#52525B] font-mono mr-2">LAST_SYNC: NOW</span>
+               <span className="text-xs text-[#52525B] font-mono mr-2">LOCAL_STORE :: ACTIVE</span>
                <Button size="sm" variant="secondary" onClick={refreshData}>
-                  <RefreshCw className="w-4 h-4 mr-2" /> Refresh
+                  <RefreshCw className="w-4 h-4 mr-2" /> Sync
                </Button>
                <Button size="sm" variant="outline" onClick={() => setIsAuthenticated(false)}>Logout</Button>
             </div>
          </div>
 
-         {/* Navigation Tabs */}
-         <div className="flex items-center gap-2 mb-8">
-            <button 
-              onClick={() => setActiveTab('overview')}
-              className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors ${activeTab === 'overview' ? 'bg-[#1F1F1F] text-white border border-[#333]' : 'text-[#A1A1AA] hover:bg-[#0A0A0A]'}`}
-            >
-               <LayoutDashboard className="w-4 h-4" /> Overview
-            </button>
-            <button 
-              onClick={() => setActiveTab('leads')}
-              className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors ${activeTab === 'leads' ? 'bg-[#1F1F1F] text-white border border-[#333]' : 'text-[#A1A1AA] hover:bg-[#0A0A0A]'}`}
-            >
-               <Users className="w-4 h-4" /> Demo Requests
-               {leads.length > 0 && <span className="bg-blue-500 text-white text-[10px] px-1.5 rounded-full">{leads.length}</span>}
-            </button>
+         {/* Stats Overview */}
+         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+            <div className="bg-[#0A0A0A] border border-[#1F1F1F] p-6 rounded-xl">
+               <div className="flex justify-between items-start mb-4">
+                  <div className="w-10 h-10 rounded bg-[#111] border border-[#262626] flex items-center justify-center text-blue-500">
+                     <Users className="w-5 h-5" />
+                  </div>
+               </div>
+               <h3 className="text-[#A1A1AA] text-sm mb-1">Total Demo Requests</h3>
+               <div className="text-3xl font-bold text-white">{leads.length}</div>
+            </div>
+            <div className="bg-[#0A0A0A] border border-[#1F1F1F] p-6 rounded-xl">
+               <div className="flex justify-between items-start mb-4">
+                  <div className="w-10 h-10 rounded bg-[#111] border border-[#262626] flex items-center justify-center text-purple-500">
+                     <MessageSquare className="w-5 h-5" />
+                  </div>
+               </div>
+               <h3 className="text-[#A1A1AA] text-sm mb-1">General Inquiries</h3>
+               <div className="text-3xl font-bold text-white">{inquiries.length}</div>
+            </div>
          </div>
 
+         {/* Tabs & Actions */}
+         <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
+            <div className="flex items-center gap-2 w-full md:w-auto">
+                <button 
+                onClick={() => setActiveTab('leads')}
+                className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors ${activeTab === 'leads' ? 'bg-[#1F1F1F] text-white border border-[#333]' : 'text-[#A1A1AA] hover:bg-[#0A0A0A]'}`}
+                >
+                Demo Requests
+                </button>
+                <button 
+                onClick={() => setActiveTab('inquiries')}
+                className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors ${activeTab === 'inquiries' ? 'bg-[#1F1F1F] text-white border border-[#333]' : 'text-[#A1A1AA] hover:bg-[#0A0A0A]'}`}
+                >
+                Inquiries
+                </button>
+            </div>
+
+            <div className="flex items-center gap-3 w-full md:w-auto">
+                <div className="relative flex-1 md:flex-none">
+                    <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#52525B]" />
+                    <input 
+                        type="text" 
+                        value={filter}
+                        onChange={(e) => setFilter(e.target.value)}
+                        placeholder="Search records..." 
+                        className="bg-[#0A0A0A] border border-[#262626] rounded-lg pl-9 pr-4 py-2 text-xs text-white focus:outline-none focus:border-blue-500 w-full" 
+                    />
+                </div>
+                <Button 
+                    size="sm" 
+                    variant="outline" 
+                    className="h-9"
+                    onClick={() => activeTab === 'leads' ? exportToCSV(leads, 'hospintel_leads') : exportToCSV(inquiries, 'hospintel_inquiries')}
+                >
+                    <Download className="w-4 h-4 mr-2" /> CSV
+                </Button>
+            </div>
+         </div>
+
+         {/* Data Tables */}
          <AnimatePresence mode="wait">
-            {activeTab === 'overview' ? (
+            {activeTab === 'leads' ? (
                <motion.div 
-                 key="overview"
-                 initial={{ opacity: 0, y: 10 }}
-                 animate={{ opacity: 1, y: 0 }}
-                 exit={{ opacity: 0, y: -10 }}
-                 className="space-y-6"
+                 key="leads"
+                 initial={{ opacity: 0 }}
+                 animate={{ opacity: 1 }}
+                 exit={{ opacity: 0 }}
+                 className="bg-[#0A0A0A] border border-[#1F1F1F] rounded-xl overflow-hidden"
                >
-                  {/* KPI Cards */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                     <div className="bg-[#0A0A0A] border border-[#1F1F1F] p-6 rounded-xl">
-                        <div className="flex justify-between items-start mb-4">
-                           <div className="w-10 h-10 rounded bg-[#111] border border-[#262626] flex items-center justify-center text-blue-500">
-                              <Users className="w-5 h-5" />
-                           </div>
-                           <span className="text-[10px] font-mono text-green-500 bg-green-500/10 px-1.5 py-0.5 rounded">+12%</span>
-                        </div>
-                        <h3 className="text-[#A1A1AA] text-sm mb-1">Total Demo Requests</h3>
-                        <div className="text-3xl font-bold text-white">{leads.length}</div>
-                     </div>
-
-                     <div className="bg-[#0A0A0A] border border-[#1F1F1F] p-6 rounded-xl">
-                        <div className="flex justify-between items-start mb-4">
-                           <div className="w-10 h-10 rounded bg-[#111] border border-[#262626] flex items-center justify-center text-amber-500">
-                              <Cookie className="w-5 h-5" />
-                           </div>
-                        </div>
-                        <h3 className="text-[#A1A1AA] text-sm mb-1">Consent Compliance</h3>
-                        <div className="text-3xl font-bold text-white">98.2%</div>
-                        <div className="text-xs text-[#52525B] mt-1">GDPR/NDPR Adherence</div>
-                     </div>
-
-                     <div className="bg-[#0A0A0A] border border-[#1F1F1F] p-6 rounded-xl">
-                        <div className="flex justify-between items-start mb-4">
-                           <div className="w-10 h-10 rounded bg-[#111] border border-[#262626] flex items-center justify-center text-purple-500">
-                              <BarChart3 className="w-5 h-5" />
-                           </div>
-                        </div>
-                        <h3 className="text-[#A1A1AA] text-sm mb-1">Site Traffic (Simulated)</h3>
-                        <div className="text-3xl font-bold text-white">~1.2k</div>
-                        <div className="text-xs text-[#52525B] mt-1">Unique Visitors / Month</div>
-                     </div>
-                  </div>
-
-                  {/* Charts / Visuals Placeholder */}
-                  <div className="grid md:grid-cols-2 gap-6">
-                     <div className="bg-[#0A0A0A] border border-[#1F1F1F] p-6 rounded-xl h-64 flex flex-col justify-center items-center text-[#333]">
-                        <span className="text-xs font-mono mb-2">TRAFFIC_SOURCE_DISTRIBUTION</span>
-                        <div className="w-32 h-32 rounded-full border-8 border-[#1F1F1F] border-t-blue-500 border-r-purple-500"></div>
-                     </div>
-                     <div className="bg-[#0A0A0A] border border-[#1F1F1F] p-6 rounded-xl h-64 flex flex-col">
-                        <span className="text-xs font-mono text-[#52525B] mb-4">GEOGRAPHIC_ORIGIN</span>
-                        <div className="flex-1 flex items-end gap-2">
-                           {[40, 65, 30, 80, 50, 90, 45].map((h, i) => (
-                              <div key={i} style={{ height: `${h}%` }} className="flex-1 bg-blue-500/20 rounded-t hover:bg-blue-500 transition-colors cursor-pointer"></div>
-                           ))}
-                        </div>
-                     </div>
-                  </div>
+                 <div className="overflow-x-auto">
+                    <table className="w-full text-left text-sm">
+                       <thead className="bg-[#111] text-[#71717A] font-mono text-xs uppercase border-b border-[#1F1F1F]">
+                          <tr>
+                             <th className="px-6 py-3 font-medium">Timestamp</th>
+                             <th className="px-6 py-3 font-medium">Organization</th>
+                             <th className="px-6 py-3 font-medium">Contact</th>
+                             <th className="px-6 py-3 font-medium">Facilities/Beds</th>
+                             <th className="px-6 py-3 font-medium">Deployment</th>
+                             <th className="px-6 py-3 font-medium text-right">Actions</th>
+                          </tr>
+                       </thead>
+                       <tbody className="divide-y divide-[#1F1F1F]">
+                          {filteredLeads.length === 0 ? (
+                             <tr>
+                                <td colSpan={6} className="px-6 py-12 text-center text-[#52525B] font-mono text-xs">
+                                   NO_RECORDS_FOUND
+                                </td>
+                             </tr>
+                          ) : (
+                             filteredLeads.map((lead) => (
+                                <tr key={lead.id} className="hover:bg-[#0F0F0F] transition-colors group">
+                                   <td className="px-6 py-4 text-[#52525B] font-mono text-xs whitespace-nowrap">
+                                      {new Date(lead.timestamp).toLocaleDateString()}
+                                      <div className="text-[10px] text-[#333]">{new Date(lead.timestamp).toLocaleTimeString()}</div>
+                                   </td>
+                                   <td className="px-6 py-4">
+                                      <div className="text-white font-medium">{lead.organization}</div>
+                                      <div className="text-[#52525B] text-xs">Role: {lead.role}</div>
+                                   </td>
+                                   <td className="px-6 py-4">
+                                      <div className="text-[#EDEDED]">{lead.fullName}</div>
+                                      <div className="text-blue-400 text-xs">{lead.email}</div>
+                                      <div className="text-[#52525B] text-xs">{lead.phone}</div>
+                                   </td>
+                                   <td className="px-6 py-4">
+                                      <div className="text-[#A1A1AA] text-xs">{lead.facilities}</div>
+                                      <div className="text-[#52525B] text-xs font-mono">{lead.beds || 'N/A'} Beds</div>
+                                   </td>
+                                   <td className="px-6 py-4 text-[#A1A1AA] text-xs">{lead.deployment}</td>
+                                   <td className="px-6 py-4 text-right">
+                                      <div className="flex justify-end gap-2">
+                                          <a href={`mailto:${lead.email}`} className="p-2 hover:bg-[#1F1F1F] rounded text-[#52525B] hover:text-white transition-colors">
+                                              <Mail className="w-4 h-4" />
+                                          </a>
+                                          <button onClick={() => handleDelete(lead.id, 'leads')} className="p-2 hover:bg-red-900/10 rounded text-[#52525B] hover:text-red-500 transition-colors">
+                                              <Trash2 className="w-4 h-4" />
+                                          </button>
+                                      </div>
+                                   </td>
+                                </tr>
+                             ))
+                          )}
+                       </tbody>
+                    </table>
+                 </div>
                </motion.div>
             ) : (
                <motion.div 
-                 key="leads"
-                 initial={{ opacity: 0, y: 10 }}
-                 animate={{ opacity: 1, y: 0 }}
-                 exit={{ opacity: 0, y: -10 }}
+                 key="inquiries"
+                 initial={{ opacity: 0 }}
+                 animate={{ opacity: 1 }}
+                 exit={{ opacity: 0 }}
+                 className="bg-[#0A0A0A] border border-[#1F1F1F] rounded-xl overflow-hidden"
                >
-                  <div className="bg-[#0A0A0A] border border-[#1F1F1F] rounded-xl overflow-hidden">
-                     {/* Toolbar */}
-                     <div className="p-4 border-b border-[#1F1F1F] flex items-center justify-between">
-                        <div className="relative">
-                           <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#52525B]" />
-                           <input type="text" placeholder="Filter requests..." className="bg-[#111] border border-[#262626] rounded pl-9 pr-4 py-1.5 text-xs text-white focus:outline-none" />
-                        </div>
-                        <Button size="sm" variant="outline" className="h-8 text-xs">
-                           <Download className="w-3 h-3 mr-2" /> Export CSV
-                        </Button>
-                     </div>
-
-                     {/* Table */}
-                     <div className="overflow-x-auto">
-                        <table className="w-full text-left text-sm">
-                           <thead className="bg-[#111] text-[#71717A] font-mono text-xs uppercase border-b border-[#1F1F1F]">
-                              <tr>
-                                 <th className="px-6 py-3 font-medium">Timestamp</th>
-                                 <th className="px-6 py-3 font-medium">Contact</th>
-                                 <th className="px-6 py-3 font-medium">Organization</th>
-                                 <th className="px-6 py-3 font-medium">Role</th>
-                                 <th className="px-6 py-3 font-medium">Facilities</th>
-                                 <th className="px-6 py-3 font-medium">Status</th>
-                              </tr>
-                           </thead>
-                           <tbody className="divide-y divide-[#1F1F1F]">
-                              {leads.length === 0 ? (
-                                 <tr>
-                                    <td colSpan={6} className="px-6 py-8 text-center text-[#52525B]">
-                                       No demo requests received yet.
-                                    </td>
-                                 </tr>
-                              ) : (
-                                 leads.map((lead: any) => (
-                                    <tr key={lead.id} className="hover:bg-[#0F0F0F] transition-colors group">
-                                       <td className="px-6 py-4 text-[#52525B] font-mono text-xs whitespace-nowrap">
-                                          {new Date(lead.timestamp).toLocaleDateString()} <span className="text-[#333]">{new Date(lead.timestamp).toLocaleTimeString()}</span>
-                                       </td>
-                                       <td className="px-6 py-4">
-                                          <div className="text-white font-medium">{lead.fullName}</div>
-                                          <div className="text-[#52525B] text-xs">{lead.email}</div>
-                                       </td>
-                                       <td className="px-6 py-4 text-[#A1A1AA]">{lead.organization}</td>
-                                       <td className="px-6 py-4 text-[#A1A1AA]">{lead.role}</td>
-                                       <td className="px-6 py-4 text-[#A1A1AA]">{lead.facilities}</td>
-                                       <td className="px-6 py-4">
-                                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-500/10 text-blue-400 border border-blue-500/20">
-                                             {lead.status}
-                                          </span>
-                                       </td>
-                                    </tr>
-                                 ))
-                              )}
-                           </tbody>
-                        </table>
-                     </div>
-                  </div>
+                 <div className="overflow-x-auto">
+                    <table className="w-full text-left text-sm">
+                       <thead className="bg-[#111] text-[#71717A] font-mono text-xs uppercase border-b border-[#1F1F1F]">
+                          <tr>
+                             <th className="px-6 py-3 font-medium">Timestamp</th>
+                             <th className="px-6 py-3 font-medium">Sender</th>
+                             <th className="px-6 py-3 font-medium">Department</th>
+                             <th className="px-6 py-3 font-medium">Message Preview</th>
+                             <th className="px-6 py-3 font-medium text-right">Actions</th>
+                          </tr>
+                       </thead>
+                       <tbody className="divide-y divide-[#1F1F1F]">
+                          {filteredInquiries.length === 0 ? (
+                             <tr>
+                                <td colSpan={5} className="px-6 py-12 text-center text-[#52525B] font-mono text-xs">
+                                   NO_RECORDS_FOUND
+                                </td>
+                             </tr>
+                          ) : (
+                             filteredInquiries.map((inq) => (
+                                <tr key={inq.id} className="hover:bg-[#0F0F0F] transition-colors group">
+                                   <td className="px-6 py-4 text-[#52525B] font-mono text-xs whitespace-nowrap">
+                                      {new Date(inq.timestamp).toLocaleDateString()}
+                                      <div className="text-[10px] text-[#333]">{new Date(inq.timestamp).toLocaleTimeString()}</div>
+                                   </td>
+                                   <td className="px-6 py-4">
+                                      <div className="text-white font-medium">{inq.firstName} {inq.lastName}</div>
+                                      <div className="text-blue-400 text-xs">{inq.email}</div>
+                                   </td>
+                                   <td className="px-6 py-4">
+                                      <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-[#1F1F1F] border border-[#333] text-[#A1A1AA]">
+                                         {inq.department}
+                                      </span>
+                                   </td>
+                                   <td className="px-6 py-4 text-[#71717A] text-xs max-w-md truncate">
+                                      {inq.message}
+                                   </td>
+                                   <td className="px-6 py-4 text-right">
+                                      <div className="flex justify-end gap-2">
+                                          <a href={`mailto:${inq.email}`} className="p-2 hover:bg-[#1F1F1F] rounded text-[#52525B] hover:text-white transition-colors">
+                                              <Mail className="w-4 h-4" />
+                                          </a>
+                                          <button onClick={() => handleDelete(inq.id, 'inquiries')} className="p-2 hover:bg-red-900/10 rounded text-[#52525B] hover:text-red-500 transition-colors">
+                                              <Trash2 className="w-4 h-4" />
+                                          </button>
+                                      </div>
+                                   </td>
+                                </tr>
+                             ))
+                          )}
+                       </tbody>
+                    </table>
+                 </div>
                </motion.div>
             )}
          </AnimatePresence>

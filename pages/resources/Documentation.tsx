@@ -129,12 +129,12 @@ export const Documentation: React.FC = () => {
   provider: "oidc"
   issuer: "https://idp.hospital.org"
   client_id: "hospintel-core"
-  fallback_mode: "local_keychain" # Critical for offline support`} />
+  fallback_mode: "local_keychain" # Critical for hybrid resilience`} />
             </DocSection>
 
             <DocSection id="patient-index" title="Patient Management">
               <p>
-                The Patient Index is the source of truth for demographics. It utilizes a probabilistic matching algorithm to resolve duplicates created during offline periods.
+                The Patient Index is the source of truth for demographics. It utilizes a probabilistic matching algorithm to resolve duplicates created during disconnected periods.
               </p>
               <p>
                 Records are sharded geographically but indexed globally. A lookup for a patient ID will check the local cache first (0ms), then the LAN mesh (5ms), then the cloud (&lt;50ms).

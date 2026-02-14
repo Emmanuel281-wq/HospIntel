@@ -1,4 +1,4 @@
-import React, { ErrorInfo, ReactNode } from 'react';
+import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { Button } from './ui/Button';
 import { Container } from './ui/Container';
 
@@ -36,7 +36,12 @@ interface ErrorBoundaryState {
   error: Error | null;
 }
 
-export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  public state: ErrorBoundaryState = {
+    hasError: false,
+    error: null
+  };
+
   constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = {
@@ -82,7 +87,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
                   <span className="text-xs">STACK_TRACE_DUMP</span>
                 </div>
                 <code className="text-xs text-red-400 block whitespace-pre-wrap">
-                  {this.state.error?.toString()}
+                  {this.state.error?.toString() || "Unknown error occurred"}
                 </code>
               </div>
 

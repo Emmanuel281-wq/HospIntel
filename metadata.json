@@ -1,5 +1,5 @@
 {
   "name": "HospIntel - Enterprise Hospital OS",
-  "description": "An offline-first hospital operating system designed for mission-critical reliability and operational continuity.",
+  "description": "A resilient, hybrid hospital operating system designed for mission-critical reliability and operational continuity.",
   "requestFramePermissions": []
 }

@@ -113,7 +113,7 @@ export const About: React.FC = () => {
            <h2 className="text-2xl font-bold text-white mb-12">Engineering Principles</h2>
            <div className="grid md:grid-cols-3 gap-8">
               {[
-                 { title: "Offline by Default", desc: "We assume the network is down. The application must function perfectly without it." },
+                 { title: "Hybrid Connectivity", desc: "We anticipate network fluctuations. The application seamlessly switches between online and offline modes to ensure continuity." },
                  { title: "Speed is Safety", desc: "A slow interface causes clinical errors. We optimize for sub-frame interaction times on standard hardware." },
                  { title: "Radical Simplicity", desc: "Complexity is the enemy of reliability. We ruthlessly prune features that do not serve the core mission." }
               ].map((item, i) => (
@@ -132,14 +132,14 @@ export const About: React.FC = () => {
               <Terminal className="w-64 h-64" />
            </div>
            
-           <h2 className="text-3xl font-bold text-white mb-6 relative z-10">Built by Systems Engineers</h2>
+           <h2 className="text-3xl font-bold text-white mb-6 relative z-10">Built for Resilience</h2>
            <p className="text-[#A1A1AA] max-w-2xl mx-auto mb-8 leading-relaxed relative z-10">
-              Our team comes from infrastructure backgrounds at major global tech firms and leading African fintechs. We understand what it takes to build resilient systems for our environment.
+              Our team is built on a foundation of rigorous engineering standards and deep healthcare insight. We are dedicated to creating systems that withstand the unique infrastructure challenges of the African continent.
            </p>
            
            <div className="inline-flex gap-4 opacity-50 grayscale hover:grayscale-0 transition-all relative z-10">
-              <div className="h-8 w-24 bg-[#1F1F1F] rounded flex items-center justify-center text-[10px] text-[#52525B] font-mono">FINTECH_DNA</div>
-              <div className="h-8 w-24 bg-[#1F1F1F] rounded flex items-center justify-center text-[10px] text-[#52525B] font-mono">INFRA_VETS</div>
+              <div className="h-8 w-24 bg-[#1F1F1F] rounded flex items-center justify-center text-[10px] text-[#52525B] font-mono">RELIABILITY</div>
+              <div className="h-8 w-24 bg-[#1F1F1F] rounded flex items-center justify-center text-[10px] text-[#52525B] font-mono">ENGINEERING</div>
               <div className="h-8 w-24 bg-[#1F1F1F] rounded flex items-center justify-center text-[10px] text-[#52525B] font-mono">HEALTH_OPS</div>
            </div>
         </div>

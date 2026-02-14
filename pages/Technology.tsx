@@ -77,8 +77,8 @@ export const Technology: React.FC = () => {
                transition={{ delay: 0.1 }}
                className="text-5xl md:text-7xl font-bold tracking-tighter text-white mb-8"
             >
-               The Local-First <br/>
-               <span className="text-[#333]">Revolution.</span>
+               The Resilient <br/>
+               <span className="text-[#333]">Hybrid Model.</span>
             </motion.h1>
             
             <motion.p 
@@ -87,8 +87,8 @@ export const Technology: React.FC = () => {
                transition={{ delay: 0.2 }}
                className="text-xl text-[#A1A1AA] leading-relaxed max-w-2xl"
             >
-               HospIntel inverts the traditional cloud model. We treat the local device as the primary source of truth, 
-               enabling instant reads/writes and background synchronization that respects the laws of physics.
+               HospIntel fortifies the traditional cloud model. We utilize local caching as an automatic failover mechanism, 
+               enabling instant reads/writes during outages and background synchronization that respects the laws of physics.
             </motion.p>
          </div>
 
@@ -161,8 +161,8 @@ export const Technology: React.FC = () => {
                <TechCard 
                   delay={0.1}
                   icon={WifiOff}
-                  title="Offline-First Core"
-                  desc="Applications write to a local SQLite database with a WASM layer. The UI never blocks on network requests, ensuring instant responsiveness regardless of uplink status."
+                  title="Adaptive Edge Core"
+                  desc="Applications utilize a local SQLite cache. The UI never blocks on network requests, ensuring instant responsiveness regardless of uplink status."
                />
                <TechCard 
                   delay={0.2}

@@ -34,8 +34,8 @@ const features = [
   },
   {
     id: 5,
-    title: "Offline & Online Sync",
-    description: "Work anywhere; data syncs automatically. Zero downtime during network failures.",
+    title: "Hybrid Operation",
+    description: "Work anywhere; data syncs automatically. The system switches modes seamlessly to handle network failures.",
     icon: Wifi,
     colSpan: "lg:col-span-1",
     highlight: true,

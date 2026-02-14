@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Container } from '../components/ui/Container';
 import { Button } from '../components/ui/Button';
-import { Activity, Wifi, Server, ShieldCheck, Check, MessageCircle } from 'lucide-react';
+import { Activity, Wifi, Server, ShieldCheck, Check, MessageCircle, ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 export const RequestDemo: React.FC = () => {
+  const navigate = useNavigate();
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [formData, setFormData] = useState({
     fullName: '',
@@ -26,20 +28,26 @@ export const RequestDemo: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // --- Persist to Local Storage for Admin Panel ---
+    // 1. Persist to Local Storage (The "Database")
     try {
-        const existingReqs = JSON.parse(localStorage.getItem('hospintel_demo_requests') || '[]');
+        const existingReqs = JSON.parse(localStorage.getItem('hospintel_db_demos') || '[]');
         const newReq = {
-            id: Date.now().toString(),
+            id: crypto.randomUUID(), // Unique ID
             ...formData,
-            status: 'Pending Review',
-            timestamp: new Date().toISOString()
+            status: 'NEW',
+            timestamp: new Date().toISOString(),
+            source: 'WEB_FORM'
         };
-        localStorage.setItem('hospintel_demo_requests', JSON.stringify([newReq, ...existingReqs]));
+        localStorage.setItem('hospintel_db_demos', JSON.stringify([newReq, ...existingReqs]));
     } catch (err) {
-        console.error("Local storage error", err);
+        console.error("Local write error", err);
     }
-    // ------------------------------------------------
+
+    // 2. Trigger Email Client (The "Notification")
+    const subject = `Demo Request: ${formData.organization}`;
+    const body = `New Institutional Demo Request\n\nName: ${formData.fullName}\nRole: ${formData.role}\nOrg: ${formData.organization}\n\nPhone: ${formData.phone}\nEmail: ${formData.email}\n\nSpecs:\nFacilities: ${formData.facilities}\nBeds: ${formData.beds}\nDeployment: ${formData.deployment}\n\nMessage:\n${formData.message}`;
+    
+    window.location.href = `mailto:inquiries.hospintel@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
     setIsSubmitted(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -57,17 +65,15 @@ export const RequestDemo: React.FC = () => {
              <div className="w-16 h-16 rounded-full bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mx-auto mb-6 text-blue-500">
                <Check className="w-8 h-8" />
              </div>
-             <h2 className="text-3xl font-bold text-white mb-4">Request Received</h2>
+             <h2 className="text-3xl font-bold text-white mb-4">Request Logged</h2>
              <p className="text-[#A1A1AA] text-lg mb-8 leading-relaxed">
-               Our institutional team will review your architectural requirements and contact you shortly to schedule your evaluation.
+               Your architectural requirements have been securely recorded in our system. Your default email client has been opened to finalize the transmission.
              </p>
              
-             <div className="border-t border-[#1F1F1F] pt-8 mt-8">
-               <p className="text-sm text-[#71717A] mb-4">Need immediate assistance?</p>
-               <a href="https://wa.me/2347076627159" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm text-[#EDEDED] hover:text-blue-400 transition-colors border border-[#262626] rounded-full px-4 py-2 hover:bg-[#111] hover:border-[#333]">
-                 <MessageCircle className="w-4 h-4" />
-                 Contact our institutional team via WhatsApp
-               </a>
+             <div className="flex justify-center gap-4">
+               <Button variant="outline" onClick={() => navigate('/')}>
+                 <ArrowLeft className="w-4 h-4 mr-2" /> Return Home
+               </Button>
              </div>
            </motion.div>
         </Container>
@@ -94,7 +100,7 @@ export const RequestDemo: React.FC = () => {
             <div className="space-y-6 mb-12">
                {[
                  { text: "Full EMR replacement", icon: Activity },
-                 { text: "Offline-first architecture", icon: Wifi },
+                 { text: "Hybrid-cloud architecture", icon: Wifi },
                  { text: "Multi-facility scalability", icon: Server },
                  { text: "Secure deployment models", icon: ShieldCheck }
                ].map((item, i) => (

@@ -36,7 +36,7 @@ export const AboutBrief: React.FC = () => {
             </h2>
             
             <p className="text-lg text-[#A1A1AA] mb-8 leading-relaxed">
-              We don't just patch healthcare software; we architect resilience. Our team hails from high-frequency trading and aerospace backgrounds, bringing a zero-tolerance mindset for failure to the patient bedside.
+              We don't just patch healthcare software; we architect resilience. We bring a zero-tolerance mindset for failure to the patient bedside, ensuring operations continue regardless of infrastructure conditions.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4">

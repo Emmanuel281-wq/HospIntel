@@ -68,7 +68,7 @@ export const Features: React.FC = () => {
             Engineered for <span className="text-[#52525B]">Resilience.</span>
           </h2>
           <p className="text-[#A1A1AA] text-lg">
-            Traditional hospital software relies on perfect connectivity. HospIntel assumes the network will fail, 
+            Traditional hospital software relies on perfect connectivity. HospIntel adapts when the network fails, 
             providing a distributed operating system that preserves data integrity under any condition.
           </p>
         </motion.div>
@@ -83,8 +83,8 @@ export const Features: React.FC = () => {
           {/* Main Feature - Offline Core */}
           <BentoItem 
             className="md:col-span-2 md:row-span-2"
-            title="Offline-First Architecture"
-            description="Our CRDT-based engine enables full read/write capabilities without an internet connection. Data merges automatically and conflict-free when connectivity is restored."
+            title="Adaptive Hybrid Architecture"
+            description="Our smart sync engine detects connectivity loss and instantly switches to local storage. Data merges automatically and conflict-free when the connection is restored."
             icon={Wifi}
           >
             <div className="mt-4 rounded-xl bg-[#0F0F0F] border border-[#262626] p-4 h-48 relative overflow-hidden">

@@ -288,10 +288,9 @@ export const Hero: React.FC = () => {
               variants={itemVariants}
               className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tighter mb-8 text-white relative z-10 leading-[1.05]"
             >
-              Critical <br />
-              Infrastructure for <br/>
+              Zero Downtime. <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-200 to-white animate-shimmer bg-[length:200%_auto]">
-                Modern Healthcare.
+                Intelligent Sync.
               </span>
             </motion.h1>
             
@@ -299,8 +298,8 @@ export const Hero: React.FC = () => {
               variants={itemVariants}
               className="text-lg text-[#A1A1AA] mb-10 max-w-xl leading-relaxed font-light tracking-wide"
             >
-              The operating system for hospitals that value resilience. 
-              High availability, total data sovereignty, and robust encryption for clinical environments.
+              Never let unstable internet stop your hospital operations. 
+              Our EMR automatically switches between offline and online modes, synchronizing data to the cloud when connectivity returns.
             </motion.p>
 
             <motion.div 
