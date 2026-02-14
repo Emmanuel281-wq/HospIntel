@@ -16,7 +16,7 @@ const Article = lazy(() => import('./pages/Article').then(module => ({ default: 
 const Contact = lazy(() => import('./pages/Contact').then(module => ({ default: module.Contact })));
 const Migration = lazy(() => import('./pages/Migration').then(module => ({ default: module.Migration })));
 const NotFound = lazy(() => import('./pages/NotFound').then(module => ({ default: module.NotFound })));
-const Admin = lazy(() => import('./pages/Admin').then(module => ({ default: module.Admin }))); // New Admin Route
+const Admin = lazy(() => import('./pages/Admin').then(module => ({ default: module.Admin })));
 
 // Resources
 const Documentation = lazy(() => import('./pages/resources/Documentation').then(module => ({ default: module.Documentation })));
@@ -46,7 +46,7 @@ function App() {
               <Route path="/insights/:slug" element={<Article />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/migration" element={<Migration />} />
-              <Route path="/admin" element={<Admin />} /> {/* Admin Route */}
+              <Route path="/admin" element={<Admin />} />
               
               {/* Resources Routes */}
               <Route path="/resources/documentation" element={<Documentation />} />

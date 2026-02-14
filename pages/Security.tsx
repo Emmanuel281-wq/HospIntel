@@ -39,7 +39,7 @@ export const Security: React.FC = () => {
              <span>Zero Trust Architecture</span>
            </motion.div>
            
-           <h1 className="text-5xl md:text-7xl font-bold tracking-tighter text-white mb-8">
+           <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold tracking-tighter text-white mb-8">
              Defense in <br/><span className="text-[#333]">Depth.</span>
            </h1>
            

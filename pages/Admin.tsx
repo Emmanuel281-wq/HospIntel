@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Container } from '../components/ui/Container';
 import { Button } from '../components/ui/Button';
 import { 
-  LayoutDashboard, Users, MessageSquare, 
-  BarChart3, RefreshCw, Lock, 
-  Download, Search, Trash2, Mail
+  Users, MessageSquare, 
+  RefreshCw, Lock, 
+  Download, Search, Trash2, Mail,
+  Terminal, Settings, AlertCircle, ToggleLeft, Loader2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { api } from '../utils/mockApi';
 
 // --- Types ---
 interface Lead {
@@ -41,11 +43,18 @@ interface Inquiry {
 const LoginScreen = ({ onLogin }: { onLogin: () => void }) => {
   const [pass, setPass] = useState('');
   const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Updated Secure Key
-    if (pass === 'the_snake_to_the_fox') { 
+    setLoading(true);
+    setError(false);
+    
+    // Simulate server-side check via API abstraction
+    const isValid = await api.verifyAdminPassword(pass);
+    
+    setLoading(false);
+    if (isValid) {
       onLogin();
     } else {
       setError(true);
@@ -73,10 +82,13 @@ const LoginScreen = ({ onLogin }: { onLogin: () => void }) => {
                 placeholder="Access Key"
                 className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors text-sm"
                 autoFocus
+                disabled={loading}
              />
           </div>
           {error && <p className="text-red-500 text-xs text-center">Invalid access credentials.</p>}
-          <Button className="w-full h-10">Authenticate</Button>
+          <Button disabled={loading} className="w-full h-10">
+            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Authenticate"}
+          </Button>
         </form>
         <div className="mt-6 text-center text-[10px] text-[#52525B] font-mono">
            HOSPINTEL_ADMIN_GATEWAY // v2.4 (SECURE)
@@ -89,7 +101,7 @@ const LoginScreen = ({ onLogin }: { onLogin: () => void }) => {
 // --- Dashboard Component ---
 export const Admin: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [activeTab, setActiveTab] = useState<'leads' | 'inquiries'>('leads');
+  const [activeTab, setActiveTab] = useState<'leads' | 'inquiries' | 'logs' | 'config'>('leads');
   const [leads, setLeads] = useState<Lead[]>([]);
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
   const [filter, setFilter] = useState('');
@@ -211,18 +223,30 @@ export const Admin: React.FC = () => {
 
          {/* Tabs & Actions */}
          <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
-            <div className="flex items-center gap-2 w-full md:w-auto">
+            <div className="flex items-center gap-2 w-full md:w-auto overflow-x-auto pb-2 md:pb-0">
                 <button 
                 onClick={() => setActiveTab('leads')}
-                className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors ${activeTab === 'leads' ? 'bg-[#1F1F1F] text-white border border-[#333]' : 'text-[#A1A1AA] hover:bg-[#0A0A0A]'}`}
+                className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors whitespace-nowrap ${activeTab === 'leads' ? 'bg-[#1F1F1F] text-white border border-[#333]' : 'text-[#A1A1AA] hover:bg-[#0A0A0A]'}`}
                 >
                 Demo Requests
                 </button>
                 <button 
                 onClick={() => setActiveTab('inquiries')}
-                className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors ${activeTab === 'inquiries' ? 'bg-[#1F1F1F] text-white border border-[#333]' : 'text-[#A1A1AA] hover:bg-[#0A0A0A]'}`}
+                className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors whitespace-nowrap ${activeTab === 'inquiries' ? 'bg-[#1F1F1F] text-white border border-[#333]' : 'text-[#A1A1AA] hover:bg-[#0A0A0A]'}`}
                 >
                 Inquiries
+                </button>
+                <button 
+                onClick={() => setActiveTab('logs')}
+                className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors whitespace-nowrap ${activeTab === 'logs' ? 'bg-[#1F1F1F] text-white border border-[#333]' : 'text-[#A1A1AA] hover:bg-[#0A0A0A]'}`}
+                >
+                System Logs
+                </button>
+                <button 
+                onClick={() => setActiveTab('config')}
+                className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors whitespace-nowrap ${activeTab === 'config' ? 'bg-[#1F1F1F] text-white border border-[#333]' : 'text-[#A1A1AA] hover:bg-[#0A0A0A]'}`}
+                >
+                Configuration
                 </button>
             </div>
 
@@ -250,7 +274,7 @@ export const Admin: React.FC = () => {
 
          {/* Data Tables */}
          <AnimatePresence mode="wait">
-            {activeTab === 'leads' ? (
+            {activeTab === 'leads' && (
                <motion.div 
                  key="leads"
                  initial={{ opacity: 0 }}
@@ -315,7 +339,9 @@ export const Admin: React.FC = () => {
                     </table>
                  </div>
                </motion.div>
-            ) : (
+            )}
+            
+            {activeTab === 'inquiries' && (
                <motion.div 
                  key="inquiries"
                  initial={{ opacity: 0 }}
@@ -375,6 +401,81 @@ export const Admin: React.FC = () => {
                           )}
                        </tbody>
                     </table>
+                 </div>
+               </motion.div>
+            )}
+
+            {activeTab === 'logs' && (
+               <motion.div 
+                 key="logs"
+                 initial={{ opacity: 0 }}
+                 animate={{ opacity: 1 }}
+                 exit={{ opacity: 0 }}
+                 className="bg-[#0A0A0A] border border-[#1F1F1F] rounded-xl overflow-hidden p-6"
+               >
+                 <div className="flex items-center gap-3 mb-6">
+                    <Terminal className="w-5 h-5 text-blue-500" />
+                    <h3 className="text-lg font-bold text-white">System Logs</h3>
+                 </div>
+                 
+                 <div className="bg-[#050505] border border-[#262626] rounded-lg p-4 font-mono text-xs h-[400px] overflow-y-auto custom-scrollbar">
+                    <div className="text-green-500 mb-1">[INFO] System initialized at {new Date().toLocaleTimeString()}</div>
+                    <div className="text-[#52525B] mb-1">[SYS] Connecting to local storage daemon... OK</div>
+                    <div className="text-[#52525B] mb-1">[AUTH] Admin session started for user: admin@hospintel.com</div>
+                    <div className="text-[#52525B] mb-1">[DB] Rehydrating state from 'hospintel_db_demos'... OK ({leads.length} records)</div>
+                    <div className="text-[#52525B] mb-1">[DB] Rehydrating state from 'hospintel_db_inquiries'... OK ({inquiries.length} records)</div>
+                    <div className="text-blue-400 mb-1">[NET] Sync engine idle. Waiting for upstream connection...</div>
+                    <div className="text-amber-500 mb-1">[WARN] Telemetry: High latency detected on node 'AF-WEST-1' (simulated)</div>
+                    <div className="text-[#52525B] mb-1">[SYS] Routine maintenance scheduled for 03:00 WAT</div>
+                 </div>
+               </motion.div>
+            )}
+
+            {activeTab === 'config' && (
+               <motion.div 
+                 key="config"
+                 initial={{ opacity: 0 }}
+                 animate={{ opacity: 1 }}
+                 exit={{ opacity: 0 }}
+                 className="bg-[#0A0A0A] border border-[#1F1F1F] rounded-xl overflow-hidden p-6"
+               >
+                 <div className="flex items-center gap-3 mb-6">
+                    <Settings className="w-5 h-5 text-blue-500" />
+                    <h3 className="text-lg font-bold text-white">System Configuration</h3>
+                 </div>
+
+                 <div className="max-w-2xl space-y-6">
+                    <div className="p-4 rounded bg-[#111] border border-[#262626] flex items-center justify-between opacity-60 cursor-not-allowed">
+                       <div>
+                          <div className="text-white font-medium mb-1">Maintenance Mode</div>
+                          <div className="text-xs text-[#71717A]">Suspend public access to forms</div>
+                       </div>
+                       <ToggleLeft className="w-8 h-8 text-[#333]" />
+                    </div>
+
+                    <div className="p-4 rounded bg-[#111] border border-[#262626] flex items-center justify-between opacity-60 cursor-not-allowed">
+                       <div>
+                          <div className="text-white font-medium mb-1">Email Notifications</div>
+                          <div className="text-xs text-[#71717A]">Send alerts on new lead submission</div>
+                       </div>
+                       <ToggleLeft className="w-8 h-8 text-green-500" />
+                    </div>
+
+                    <div className="p-4 rounded bg-[#111] border border-[#262626] flex items-center justify-between opacity-60 cursor-not-allowed">
+                       <div>
+                          <div className="text-white font-medium mb-1">Data Retention Policy</div>
+                          <div className="text-xs text-[#71717A]">Auto-delete records older than 90 days</div>
+                       </div>
+                       <div className="flex items-center gap-2">
+                          <span className="text-xs font-mono text-[#52525B]">90 DAYS</span>
+                          <Settings className="w-4 h-4 text-[#52525B]" />
+                       </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 text-xs text-amber-500 bg-amber-500/10 border border-amber-500/20 p-3 rounded">
+                       <AlertCircle className="w-4 h-4" />
+                       Configuration changes are disabled in this demo environment.
+                    </div>
                  </div>
                </motion.div>
             )}

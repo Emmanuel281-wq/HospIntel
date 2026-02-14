@@ -29,7 +29,7 @@ const FeatureRow = ({ title, desc, icon: Icon, delay }: any) => (
     </div>
     <div>
       <h3 className="text-base font-medium text-[#EDEDED] mb-1 group-hover:text-white transition-colors">{title}</h3>
-      <p className="text-sm text-[#A1A1AA] leading-relaxed max-w-xl">{desc}</p>
+      <p className="text-sm text-[#D4D4D8] leading-relaxed max-w-xl">{desc}</p>
     </div>
   </motion.div>
 );
@@ -68,7 +68,7 @@ export const Product: React.FC = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="text-5xl md:text-7xl font-bold tracking-tighter text-white mb-8 leading-tight"
+                className="text-4xl md:text-5xl lg:text-7xl font-bold tracking-tighter text-white mb-8 leading-tight"
               >
                 Precision Engineering for <span className="text-[#333]">Clinical Scale.</span>
               </motion.h1>
@@ -77,7 +77,7 @@ export const Product: React.FC = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className="text-xl text-[#A1A1AA] leading-relaxed max-w-xl font-light"
+                className="text-xl text-[#E4E4E7] leading-relaxed max-w-xl font-light"
               >
                 HospIntel is a modular operating system designed to handle the complexity of modern hospital environments without the fragility of legacy cloud software.
               </motion.p>
@@ -95,7 +95,7 @@ export const Product: React.FC = () => {
               <div className="absolute -inset-1 bg-gradient-to-b from-blue-500/10 via-hosp-gold/5 to-transparent blur-3xl opacity-40 rounded-[2rem] group-hover:opacity-60 transition-opacity duration-700"></div>
 
               {/* Main Interface Frame */}
-              <div className="relative rounded-xl border border-white/10 bg-[#0A0A0A]/80 backdrop-blur-xl shadow-[0_0_0_1px_rgba(255,255,255,0.05),0_50px_100px_-20px_rgba(0,0,0,0.5)] overflow-hidden ring-1 ring-white/5 p-6">
+              <div className="relative rounded-xl border border-white/10 bg-[#0A0A0A]/80 backdrop-blur-md shadow-[0_0_0_1px_rgba(255,255,255,0.05),0_50px_100px_-20px_rgba(0,0,0,0.5)] overflow-hidden ring-1 ring-white/5 p-6">
                 <div className="absolute inset-0 bg-grid-pattern opacity-10 pointer-events-none" />
                 <div className="absolute top-0 right-0 p-4 flex gap-2">
                   <div className="w-2 h-2 rounded-full bg-[#262626]" />
@@ -110,7 +110,7 @@ export const Product: React.FC = () => {
                       <LayoutTemplate className="w-4 h-4 text-blue-400" />
                       <span className="text-[#EDEDED]">Interface Layer</span>
                     </div>
-                    <span className="text-[#52525B]">React / Optimistic UI</span>
+                    <span className="text-[#71717A]">React / Optimistic UI</span>
                   </div>
                   
                   {/* Connection */}
@@ -124,7 +124,7 @@ export const Product: React.FC = () => {
                       <Zap className="w-4 h-4 text-blue-400" />
                       <span className="text-[#EDEDED]">Sync Engine</span>
                     </div>
-                    <span className="text-[#52525B]">CRDT / WebSocket</span>
+                    <span className="text-[#71717A]">CRDT / WebSocket</span>
                   </div>
 
                   {/* Connection */}
@@ -138,7 +138,7 @@ export const Product: React.FC = () => {
                       <Database className="w-4 h-4 text-blue-400" />
                       <span className="text-[#EDEDED]">Local Persistence</span>
                     </div>
-                    <span className="text-[#52525B]">SQLite / WASM</span>
+                    <span className="text-[#71717A]">SQLite / WASM</span>
                   </div>
                 </div>
               </div>
@@ -171,7 +171,7 @@ export const Product: React.FC = () => {
                   <Users className="w-5 h-5" />
                 </div>
                 <h3 className="text-2xl font-semibold text-white mb-4">Patient Index & Master Record</h3>
-                <p className="text-[#A1A1AA] text-lg mb-8 max-w-lg">
+                <p className="text-[#D4D4D8] text-lg mb-8 max-w-lg">
                   A unified, eventually-consistent patient registry that resolves duplicates automatically. 
                   Access millions of records in sub-10ms via local indexing.
                 </p>
@@ -196,7 +196,7 @@ export const Product: React.FC = () => {
                 <TechBadge>ALGORITHM</TechBadge>
               </div>
               <h3 className="text-lg font-semibold text-white mb-2">Clinical Triage</h3>
-              <p className="text-sm text-[#A1A1AA]">
+              <p className="text-sm text-[#D4D4D8]">
                 Logic-gated workflows for emergency intake. Prioritizes patients based on vitals and resource availability.
               </p>
             </motion.div>
@@ -208,7 +208,7 @@ export const Product: React.FC = () => {
                 <TechBadge>AES-256</TechBadge>
               </div>
               <h3 className="text-lg font-semibold text-white mb-2">Role-Based Access</h3>
-              <p className="text-sm text-[#A1A1AA]">
+              <p className="text-sm text-[#D4D4D8]">
                 Granular permission sets tied to cryptographic keys. Session handling works completely offline.
               </p>
             </motion.div>
@@ -220,7 +220,7 @@ export const Product: React.FC = () => {
                 <TechBadge>REAL-TIME</TechBadge>
               </div>
               <h3 className="text-lg font-semibold text-white mb-2">Resource Inventory</h3>
-              <p className="text-sm text-[#A1A1AA]">
+              <p className="text-sm text-[#D4D4D8]">
                 Track beds, ventilators, and medication stock with optimistic updates that sync in background.
               </p>
             </motion.div>
@@ -232,7 +232,7 @@ export const Product: React.FC = () => {
                 <TechBadge>IMMUTABLE</TechBadge>
               </div>
               <h3 className="text-lg font-semibold text-white mb-2">Compliance & Audit</h3>
-              <p className="text-sm text-[#A1A1AA]">
+              <p className="text-sm text-[#D4D4D8]">
                 Every action is signed and appended to a tamper-proof local log before upstream synchronization.
               </p>
             </motion.div>
@@ -294,7 +294,7 @@ export const Product: React.FC = () => {
           
           <div className="relative">
              <div className="sticky top-32">
-                <div className="p-8 rounded-2xl bg-[#0A0A0A]/80 backdrop-blur-xl border border-[#1F1F1F] relative overflow-hidden">
+                <div className="p-8 rounded-2xl bg-[#0A0A0A]/80 backdrop-blur-md border border-[#1F1F1F] relative overflow-hidden">
                    <div className="absolute top-0 right-0 p-8 opacity-20">
                       <Settings className="w-40 h-40 text-[#52525B] animate-[spin_60s_linear_infinite]" />
                    </div>

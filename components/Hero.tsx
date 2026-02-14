@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { motion, useScroll, useTransform, useSpring, useMotionValue, AnimatePresence } from 'framer-motion';
-import { Database, Activity, Users, Clock, ArrowUpRight, Wifi, WifiOff, AlertTriangle, ShieldCheck, UserPlus, CheckCircle2, Cloud, RefreshCw, BarChart3, PieChart } from 'lucide-react';
+import { Activity, Users, Clock, ArrowUpRight, Wifi, WifiOff, AlertTriangle, ShieldCheck, UserPlus, Cloud, RefreshCw } from 'lucide-react';
 import { Container } from './ui/Container';
 import { useNavigate } from 'react-router-dom';
 
@@ -135,8 +135,8 @@ export const Hero: React.FC = () => {
             {/* Holographic Glow - Enhanced */}
             <div className={`absolute -inset-1 bg-gradient-to-b transition-colors duration-1000 blur-2xl opacity-50 rounded-[2rem] group-hover:opacity-70 ${isOffline ? 'from-amber-500/20 via-red-500/10' : 'from-blue-500/20 via-hosp-gold/10'} to-transparent`}></div>
             
-            {/* Main Interface Frame - Enhanced Glass Effect */}
-            <div className="rounded-xl border border-white/10 bg-[#0A0A0A]/60 backdrop-blur-2xl shadow-[0_0_0_1px_rgba(255,255,255,0.05),0_50px_100px_-20px_rgba(0,0,0,0.5),inset_0_0_20px_rgba(255,255,255,0.02)] overflow-hidden relative ring-1 ring-white/10">
+            {/* Main Interface Frame - Enhanced Glass Effect - Optimized Blur */}
+            <div className="rounded-xl border border-white/10 bg-[#0A0A0A]/60 backdrop-blur-md shadow-[0_0_0_1px_rgba(255,255,255,0.05),0_50px_100px_-20px_rgba(0,0,0,0.5),inset_0_0_20px_rgba(255,255,255,0.02)] overflow-hidden relative ring-1 ring-white/10">
               
               {/* Glossy Reflection Overlay */}
               <div className="absolute inset-0 bg-gradient-to-tr from-white/5 via-transparent to-transparent pointer-events-none z-0" />
@@ -185,7 +185,7 @@ export const Hero: React.FC = () => {
                            initial={{ opacity: 0, y: -20, scale: 0.9 }}
                            animate={{ opacity: 1, y: 0, scale: 1 }}
                            exit={{ opacity: 0, y: -20, scale: 0.9 }}
-                           className="bg-amber-500/10 border border-amber-500/20 backdrop-blur-md text-amber-100 px-4 py-2 rounded-lg shadow-2xl flex items-center gap-3"
+                           className="bg-amber-500/10 border border-amber-500/20 backdrop-blur-sm text-amber-100 px-4 py-2 rounded-lg shadow-2xl flex items-center gap-3"
                         >
                            <WifiOff size={16} className="text-amber-500" />
                            <div className="flex flex-col">
@@ -199,7 +199,7 @@ export const Hero: React.FC = () => {
                            initial={{ opacity: 0, y: -20, scale: 0.9 }}
                            animate={{ opacity: 1, y: 0, scale: 1 }}
                            exit={{ opacity: 0, y: -20, scale: 0.9 }}
-                           className="bg-blue-500/10 border border-blue-500/20 backdrop-blur-md text-blue-100 px-4 py-2 rounded-lg shadow-2xl flex items-center gap-3"
+                           className="bg-blue-500/10 border border-blue-500/20 backdrop-blur-sm text-blue-100 px-4 py-2 rounded-lg shadow-2xl flex items-center gap-3"
                         >
                            <Cloud size={16} className="text-blue-400" />
                            <div className="flex flex-col">
@@ -522,7 +522,7 @@ export const Hero: React.FC = () => {
 
             <motion.h1 
               variants={itemVariants}
-              className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tighter mb-8 text-white relative z-10 leading-[1.05]"
+              className="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tighter mb-8 text-white relative z-10 leading-[1.05]"
             >
               Zero Downtime. <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-200 to-white animate-shimmer bg-[length:200%_auto]">
@@ -532,7 +532,7 @@ export const Hero: React.FC = () => {
             
             <motion.p 
               variants={itemVariants}
-              className="text-lg text-[#A1A1AA] mb-10 max-w-xl leading-relaxed font-light tracking-wide"
+              className="text-lg text-[#E4E4E7] mb-10 max-w-xl leading-relaxed font-light tracking-wide"
             >
               Never let unstable internet stop your hospital operations. 
               Our EMR automatically switches between offline and online modes, synchronizing data to the cloud when connectivity returns.

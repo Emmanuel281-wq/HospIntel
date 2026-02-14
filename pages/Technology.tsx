@@ -75,7 +75,7 @@ export const Technology: React.FC = () => {
                initial={{ opacity: 0, y: 20 }}
                animate={{ opacity: 1, y: 0 }}
                transition={{ delay: 0.1 }}
-               className="text-5xl md:text-7xl font-bold tracking-tighter text-white mb-8"
+               className="text-4xl md:text-5xl lg:text-7xl font-bold tracking-tighter text-white mb-8"
             >
                The Resilient <br/>
                <span className="text-[#333]">Hybrid Model.</span>

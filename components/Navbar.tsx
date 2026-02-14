@@ -19,6 +19,16 @@ export const Navbar: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => { document.body.style.overflow = 'unset'; };
+  }, [mobileMenuOpen]);
+
   const navLinks = [
     { label: 'Home', href: '/' },
     { label: 'Product', href: '/product' },
@@ -33,7 +43,7 @@ export const Navbar: React.FC = () => {
     <nav 
       className={`fixed top-0 w-full z-50 transition-all duration-300 ease-in-out border-b ${
         isScrolled 
-          ? 'bg-[#050505]/80 backdrop-blur-xl border-white/5 py-3' 
+          ? 'bg-[#050505]/80 backdrop-blur-md border-white/5 py-3' 
           : 'bg-transparent border-transparent py-5'
       }`}
     >
@@ -51,26 +61,26 @@ export const Navbar: React.FC = () => {
                 <circle cx="34" cy="6" r="2.5" stroke="white" strokeWidth="1.5" fill="#3B82F6" />
               </svg>
             </div>
-            <div className="flex flex-col justify-center">
+            <div className="flex flex-col justify-center whitespace-nowrap">
               <span className="text-lg md:text-xl font-bold tracking-tight font-sans leading-none">
                 <span className="text-white">Hosp</span><span className="text-[#3B82F6]">Intel</span>
               </span>
-              <span className="text-[8px] md:text-[9px] font-mono text-[#71717A] tracking-wider uppercase leading-none mt-1 group-hover:text-blue-400 transition-colors">
+              <span className="text-[8px] md:text-[9px] font-mono text-[#A1A1AA] tracking-wider uppercase leading-none mt-1 group-hover:text-blue-400 transition-colors">
                 OS v2.4
               </span>
             </div>
           </Link>
 
           {/* Desktop Navigation - Centered Pill */}
-          <div className="hidden md:flex items-center justify-center absolute left-1/2 transform -translate-x-1/2">
-             <div className="flex items-center gap-1 p-1 rounded-full bg-white/[0.03] border border-white/[0.05] backdrop-blur-md shadow-lg shadow-black/20">
+          <div className="hidden md:flex items-center justify-center absolute left-1/2 transform -translate-x-1/2 w-auto max-w-[60vw]">
+             <div className="flex items-center gap-1 p-1 rounded-full bg-white/[0.03] border border-white/[0.05] backdrop-blur-md shadow-lg shadow-black/20 overflow-x-auto no-scrollbar">
                 {navLinks.map((link) => {
                   const isActive = location.pathname === link.href;
                   return (
                     <Link 
                       key={link.label} 
                       to={link.href} 
-                      className={`px-4 py-1.5 text-sm font-medium rounded-full transition-all duration-200 ${
+                      className={`px-3 lg:px-4 py-1.5 text-xs lg:text-sm font-medium rounded-full transition-all duration-200 whitespace-nowrap ${
                         isActive 
                         ? 'text-white bg-blue-600/20 border border-blue-500/20' 
                         : 'text-[#A1A1AA] hover:text-white hover:bg-white/[0.05]'
@@ -123,28 +133,27 @@ export const Navbar: React.FC = () => {
         {mobileMenuOpen && (
           <motion.div 
             initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
+            animate={{ opacity: 1, height: '100vh' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-[#0A0A0A] border-b border-[#262626] overflow-hidden absolute top-full left-0 w-full shadow-2xl"
+            className="md:hidden bg-[#0A0A0A] overflow-y-auto fixed top-[69px] left-0 w-full z-40 pb-20"
           >
-            <div className="px-4 pt-4 pb-8 space-y-2">
+            <div className="px-4 py-6 space-y-2">
               {navLinks.map((link) => (
                 <Link
                   key={link.label}
                   to={link.href}
-                  className="block px-4 py-3 text-base font-medium text-[#A1A1AA] hover:text-white hover:bg-white/5 rounded-lg transition-colors"
+                  className="block px-4 py-4 text-lg font-medium text-[#A1A1AA] hover:text-white hover:bg-white/5 rounded-lg transition-colors border-b border-[#1F1F1F]"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   {link.label}
                 </Link>
               ))}
-              <div className="h-px bg-[#262626] my-4"></div>
-              <div className="flex flex-col gap-3">
-                 <div className="flex items-center justify-between px-4 py-2 rounded-lg bg-blue-500/5 border border-blue-500/10">
+              <div className="pt-6 flex flex-col gap-4">
+                 <div className="flex items-center justify-between px-4 py-3 rounded-lg bg-blue-500/5 border border-blue-500/10">
                     <span className="text-xs font-mono text-blue-400">SYSTEMS OPERATIONAL</span>
                     <Activity size={14} className="text-blue-500" />
                  </div>
-                <Button onClick={() => { navigate('/request-demo'); setMobileMenuOpen(false); }} className="w-full justify-center">Book Institutional Demo</Button>
+                <Button size="lg" onClick={() => { navigate('/request-demo'); setMobileMenuOpen(false); }} className="w-full justify-center">Book Institutional Demo</Button>
               </div>
             </div>
           </motion.div>

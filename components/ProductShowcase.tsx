@@ -99,7 +99,7 @@ export const ProductShowcase: React.FC = () => {
           {/* Visual Content: Command Palette & Dashboard */}
           <motion.div 
             style={{ y: visualY, opacity: visualOpacity }}
-            className="relative order-1 lg:order-2"
+            className="relative order-1 lg:order-2 mb-20 md:mb-0"
           >
              {/* Parallax Background Glow */}
              <motion.div 

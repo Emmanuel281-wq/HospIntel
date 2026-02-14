@@ -41,7 +41,7 @@ export const About: React.FC = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tighter text-white leading-[1.1] mb-12"
+                className="text-3xl md:text-6xl lg:text-7xl font-bold tracking-tighter text-white leading-[1.1] mb-12"
               >
                 We believe that <span className="text-[#333]">reliability</span> is <br/>
                 the most critical feature of <br/>

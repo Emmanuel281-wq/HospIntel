@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { Container } from '../components/ui/Container';
 import { Button } from '../components/ui/Button';
-import { Mail, MapPin, Phone, Globe, MessageSquare, Check, AlertTriangle, ArrowRight } from 'lucide-react';
+import { Mail, MapPin, Phone, Globe, MessageSquare, Check, AlertTriangle, ArrowRight, MessageCircle, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { api } from '../utils/mockApi';
 
 export const Contact: React.FC = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     firstName: '',
@@ -22,7 +24,7 @@ export const Contact: React.FC = () => {
     if (error) setError(null);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (formData.message.length > 2000) {
@@ -30,34 +32,16 @@ export const Contact: React.FC = () => {
         return;
     }
 
-    const sanitizedMessage = formData.message.replace(/[^\x20-\x7E\n\r]/g, '');
-    const subject = `HospIntel Inquiry: ${formData.firstName} ${formData.lastName} - ${formData.department}`;
-    const body = `Name: ${formData.firstName} ${formData.lastName}
-Email: ${formData.email}
-Department: ${formData.department}
-
-Message:
-${sanitizedMessage}`;
-
-    // 1. Persist to Local Storage (The "Database")
-    try {
-        const existingContacts = JSON.parse(localStorage.getItem('hospintel_db_inquiries') || '[]');
-        const newContact = {
-            id: crypto.randomUUID(),
-            ...formData,
-            status: 'NEW',
-            timestamp: new Date().toISOString(),
-            source: 'CONTACT_FORM'
-        };
-        localStorage.setItem('hospintel_db_inquiries', JSON.stringify([newContact, ...existingContacts]));
-    } catch (e) {
-        console.error("Storage limit reached", e);
-    }
-
-    // 2. Trigger Mail Client
-    window.location.href = `mailto:inquiries.hospintel@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    setIsSubmitting(true);
     
-    setIsSubmitted(true);
+    try {
+        await api.submitForm('contact', formData);
+        setIsSubmitted(true);
+    } catch (e) {
+        setError("Failed to transmit. Please check your connection.");
+    } finally {
+        setIsSubmitting(false);
+    }
   };
 
   return (
@@ -129,6 +113,18 @@ ${sanitizedMessage}`;
                                     <span className="text-[10px] text-[#52525B] uppercase tracking-wider">Mon-Fri, 8am - 6pm WAT</span>
                                 </div>
                             </div>
+
+                            <div className="flex items-start gap-4 group/item">
+                                <div className="mt-1 w-10 h-10 rounded-lg bg-[#0F0F0F] border border-[#262626] flex items-center justify-center text-green-500 group-hover/item:border-green-500/30 group-hover/item:bg-green-500/10 transition-all">
+                                    <MessageCircle className="w-5 h-5" />
+                                </div>
+                                <div>
+                                    <h3 className="text-white font-bold text-sm mb-1">Instant Chat</h3>
+                                    <a href="https://wa.me/2347076627159" target="_blank" rel="noopener noreferrer" className="text-[#71717A] text-sm hover:text-green-400 transition-colors">
+                                        Chat on WhatsApp
+                                    </a>
+                                </div>
+                            </div>
                         </div>
 
                         <div className="mt-12 pt-8 border-t border-[#1F1F1F]">
@@ -162,9 +158,9 @@ ${sanitizedMessage}`;
                             >
                                <Check className="w-10 h-10" />
                             </motion.div>
-                            <h3 className="text-2xl font-bold text-white mb-4">Transmission Initiated</h3>
+                            <h3 className="text-2xl font-bold text-white mb-4">Message Transmitted</h3>
                             <p className="text-[#A1A1AA] mb-10 max-w-sm mx-auto leading-relaxed">
-                               We have recorded your inquiry and opened your default email client with a secure draft addressed to <strong>inquiries.hospintel@gmail.com</strong>.
+                               We have received your secure inquiry. A member of our enterprise team will review your request and respond to <strong>{formData.email}</strong> shortly.
                             </p>
                             <Button variant="outline" onClick={() => setIsSubmitted(false)} className="mx-auto">
                                 Reset Communication
@@ -202,7 +198,8 @@ ${sanitizedMessage}`;
                                           onChange={handleChange}
                                           maxLength={50}
                                           type="text" 
-                                          className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 transition-all text-sm placeholder:text-[#333]"
+                                          disabled={isSubmitting}
+                                          className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 transition-all text-sm placeholder:text-[#333] disabled:opacity-50"
                                           placeholder="Enter name"
                                         />
                                     </div>
@@ -215,7 +212,8 @@ ${sanitizedMessage}`;
                                           onChange={handleChange}
                                           maxLength={50}
                                           type="text" 
-                                          className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 transition-all text-sm placeholder:text-[#333]"
+                                          disabled={isSubmitting}
+                                          className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 transition-all text-sm placeholder:text-[#333] disabled:opacity-50"
                                           placeholder="Enter surname"
                                         />
                                     </div>
@@ -229,7 +227,8 @@ ${sanitizedMessage}`;
                                       value={formData.email}
                                       onChange={handleChange}
                                       type="email" 
-                                      className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 transition-all text-sm placeholder:text-[#333]"
+                                      disabled={isSubmitting}
+                                      className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 transition-all text-sm placeholder:text-[#333] disabled:opacity-50"
                                       placeholder="name@hospital.org"
                                     />
                                 </div>
@@ -241,7 +240,8 @@ ${sanitizedMessage}`;
                                         name="department"
                                         value={formData.department}
                                         onChange={handleChange}
-                                        className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 transition-all text-sm appearance-none cursor-pointer"
+                                        disabled={isSubmitting}
+                                        className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 transition-all text-sm appearance-none cursor-pointer disabled:opacity-50"
                                         >
                                             <option>Enterprise Licensing</option>
                                             <option>Technical Support</option>
@@ -266,14 +266,24 @@ ${sanitizedMessage}`;
                                       onChange={handleChange}
                                       maxLength={2000}
                                       rows={5} 
-                                      className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 transition-all text-sm placeholder:text-[#333] resize-none"
+                                      disabled={isSubmitting}
+                                      className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 transition-all text-sm placeholder:text-[#333] resize-none disabled:opacity-50"
                                       placeholder="How can we assist your infrastructure?"
                                     ></textarea>
                                 </div>
 
-                                <Button className="w-full h-12 mt-2 group shadow-[0_0_20px_rgba(59,130,246,0.15)]">
-                                    <span>Initiate Transfer</span>
-                                    <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                                <Button disabled={isSubmitting} className="w-full h-12 mt-2 group shadow-[0_0_20px_rgba(59,130,246,0.15)]">
+                                    {isSubmitting ? (
+                                        <>
+                                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                            <span>Encrypting & Sending...</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <span>Initiate Transfer</span>
+                                            <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                                        </>
+                                    )}
                                 </Button>
                                 
                                 <div className="text-center">

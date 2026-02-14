@@ -3,6 +3,7 @@ import { Container } from '../components/ui/Container';
 import { ArrowUpRight, Filter, Calendar, FileText, Download } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { ARTICLES } from '../data/content';
 
 const ArticleCard = ({ title, date, excerpt, tag, readTime, slug, type = "Article" }: any) => {
   const navigate = useNavigate();
@@ -53,6 +54,16 @@ export const Insights: React.FC = () => {
   const navigate = useNavigate();
   const tabs = ['All', 'Engineering', 'Infrastructure', 'Clinical Ops', 'Compliance'];
 
+  // Convert ARTICLES object to array for mapping
+  const articlesList = Object.entries(ARTICLES).map(([slug, data]) => ({
+    slug,
+    ...data
+  }));
+
+  const filteredArticles = activeTab === 'All' 
+    ? articlesList 
+    : articlesList.filter(article => article.tag === activeTab);
+
   return (
     <div className="pt-32 pb-20 bg-[#050505] min-h-screen">
       <Container className="max-w-5xl">
@@ -62,7 +73,7 @@ export const Insights: React.FC = () => {
               <span className="w-2 h-2 rounded-full bg-blue-500"></span>
               <span className="text-xs font-mono text-blue-500 uppercase tracking-widest">HospIntel Research</span>
            </div>
-           <h1 className="text-4xl md:text-6xl font-bold tracking-tighter text-white mb-6">
+           <h1 className="text-3xl md:text-4xl lg:text-6xl font-bold tracking-tighter text-white mb-6">
               Engineering <span className="text-[#52525B]">&</span> Infrastructure<br/> Intelligence.
            </h1>
            <p className="text-xl text-[#A1A1AA] max-w-3xl font-light">
@@ -132,61 +143,30 @@ export const Insights: React.FC = () => {
            ))}
         </div>
 
-        {/* Article List - Structured Data for SEO */}
+        {/* Article List - Dynamic from Data */}
         <div className="space-y-4">
-           <ArticleCard 
-              slug="merkle-trees"
-              tag="Engineering"
-              date="Oct 12, 2026"
-              readTime="8 min read"
-              title="Implementing Merkle Trees for Efficient Delta Syncing"
-              excerpt="How we reduced bandwidth usage by 94% using cryptographic hashing to identify only the changed blocks in patient records."
-           />
-           <ArticleCard 
-              slug="network-outage-postmortem"
-              tag="Infrastructure"
-              date="Sep 28, 2026"
-              readTime="6 min read"
-              title="Resilience Modeling: Network Partitions"
-              excerpt="Simulating a 12-hour ISP outage and how a local mesh network maintains 100% uptime in disconnected environments."
-           />
-           <ArticleCard 
-              slug="data-sovereignty"
-              tag="Compliance"
-              date="Sep 20, 2026"
-              readTime="15 min read"
-              type="Whitepaper"
-              title="Data Sovereignty in the Age of Cloud: A Legal Framework"
-              excerpt="Navigating NDPR and African Data Sovereignty laws while maintaining the benefits of a distributed cloud architecture."
-           />
-           <ArticleCard 
-              slug="algorithmic-triage"
-              tag="Clinical Ops"
-              date="Sep 15, 2026"
-              readTime="5 min read"
-              title="Algorithmic Triage: Reducing Wait Times via Logic Gates"
-              excerpt="Moving away from subjective prioritization to data-driven queuing models based on real-time vitals analysis."
-           />
-           <ArticleCard 
-              slug="sqlite-app-format"
-              tag="Engineering"
-              date="Aug 02, 2026"
-              readTime="12 min read"
-              title="SQLite as an Application File Format"
-              excerpt="Why we chose a single-file database architecture over a client-server model for individual device state management."
-           />
+           {filteredArticles.map((article) => (
+             <ArticleCard 
+                key={article.slug}
+                {...article}
+             />
+           ))}
         </div>
         
         {/* Newsletter / Updates CTA */}
-        <div className="mt-24 p-12 bg-[#0A0A0A] border border-[#1F1F1F] rounded-2xl text-center">
+        <div className="mt-24 p-8 md:p-12 bg-[#0A0A0A] border border-[#1F1F1F] rounded-2xl text-center">
             <h3 className="text-2xl font-bold text-white mb-4">Subscribe to the Engineering Journal</h3>
             <p className="text-[#A1A1AA] mb-8 max-w-lg mx-auto">
                 Get technical deep dives and architectural updates delivered to your inbox. 
                 No marketing fluff, only systems engineering.
             </p>
-            <div className="flex max-w-md mx-auto gap-2">
-                <input type="email" placeholder="work_email@hospital.org" className="flex-1 bg-[#050505] border border-[#262626] rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" />
-                <button className="bg-[#EDEDED] text-black px-6 py-2 rounded-lg font-medium hover:bg-white transition-colors">Subscribe</button>
+            <div className="flex flex-col sm:flex-row max-w-md mx-auto gap-3">
+                <input 
+                  type="email" 
+                  placeholder="work_email@hospital.org" 
+                  className="flex-1 w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500" 
+                />
+                <button className="w-full sm:w-auto bg-[#EDEDED] text-black px-6 py-3 rounded-lg font-medium hover:bg-white transition-colors">Subscribe</button>
             </div>
         </div>
 

@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { Container } from '../components/ui/Container';
 import { Button } from '../components/ui/Button';
-import { Activity, Wifi, Server, ShieldCheck, Check, MessageCircle, ArrowLeft } from 'lucide-react';
+import { Activity, Wifi, Server, ShieldCheck, Check, ArrowLeft, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { api } from '../utils/mockApi';
 
 export const RequestDemo: React.FC = () => {
   const navigate = useNavigate();
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     fullName: '',
     organization: '',
@@ -25,32 +27,19 @@ export const RequestDemo: React.FC = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // 1. Persist to Local Storage (The "Database")
-    try {
-        const existingReqs = JSON.parse(localStorage.getItem('hospintel_db_demos') || '[]');
-        const newReq = {
-            id: crypto.randomUUID(), // Unique ID
-            ...formData,
-            status: 'NEW',
-            timestamp: new Date().toISOString(),
-            source: 'WEB_FORM'
-        };
-        localStorage.setItem('hospintel_db_demos', JSON.stringify([newReq, ...existingReqs]));
-    } catch (err) {
-        console.error("Local write error", err);
-    }
-
-    // 2. Trigger Email Client (The "Notification")
-    const subject = `Demo Request: ${formData.organization}`;
-    const body = `New Institutional Demo Request\n\nName: ${formData.fullName}\nRole: ${formData.role}\nOrg: ${formData.organization}\n\nPhone: ${formData.phone}\nEmail: ${formData.email}\n\nSpecs:\nFacilities: ${formData.facilities}\nBeds: ${formData.beds}\nDeployment: ${formData.deployment}\n\nMessage:\n${formData.message}`;
+    setIsSubmitting(true);
     
-    window.location.href = `mailto:inquiries.hospintel@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-
-    setIsSubmitted(true);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    try {
+        await api.submitForm('demo', formData);
+        setIsSubmitted(true);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (e) {
+        alert("Transmission failed. Please verify your connection.");
+    } finally {
+        setIsSubmitting(false);
+    }
   };
 
   if (isSubmitted) {
@@ -67,7 +56,7 @@ export const RequestDemo: React.FC = () => {
              </div>
              <h2 className="text-3xl font-bold text-white mb-4">Request Logged</h2>
              <p className="text-[#A1A1AA] text-lg mb-8 leading-relaxed">
-               Your architectural requirements have been securely recorded in our system. Your default email client has been opened to finalize the transmission.
+               Your architectural requirements have been securely recorded in our system. A solutions architect will reach out to schedule your executive briefing within 24 hours.
              </p>
              
              <div className="flex justify-center gap-4">
@@ -89,7 +78,7 @@ export const RequestDemo: React.FC = () => {
           <div>
             <div className="mb-8">
               <span className="text-blue-500 font-mono text-xs uppercase tracking-widest mb-4 block">Institutional Access</span>
-              <h1 className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
+              <h1 className="text-3xl md:text-5xl font-bold text-white mb-6 leading-tight">
                 Evaluate the Complete EMR Infrastructure.
               </h1>
               <p className="text-lg text-[#A1A1AA] leading-relaxed">
@@ -134,7 +123,8 @@ export const RequestDemo: React.FC = () => {
                     value={formData.fullName}
                     onChange={handleChange}
                     type="text" 
-                    className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors text-sm" 
+                    disabled={isSubmitting}
+                    className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors text-sm disabled:opacity-50" 
                  />
               </div>
 
@@ -146,7 +136,8 @@ export const RequestDemo: React.FC = () => {
                     value={formData.organization}
                     onChange={handleChange}
                     type="text" 
-                    className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors text-sm" 
+                    disabled={isSubmitting}
+                    className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors text-sm disabled:opacity-50" 
                  />
               </div>
 
@@ -159,7 +150,8 @@ export const RequestDemo: React.FC = () => {
                       value={formData.role}
                       onChange={handleChange}
                       type="text" 
-                      className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors text-sm" 
+                      disabled={isSubmitting}
+                      className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors text-sm disabled:opacity-50" 
                    />
                 </div>
                 <div className="space-y-2">
@@ -170,7 +162,8 @@ export const RequestDemo: React.FC = () => {
                       value={formData.phone}
                       onChange={handleChange}
                       type="tel" 
-                      className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors text-sm" 
+                      disabled={isSubmitting}
+                      className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors text-sm disabled:opacity-50" 
                    />
                 </div>
               </div>
@@ -183,7 +176,8 @@ export const RequestDemo: React.FC = () => {
                     value={formData.email}
                     onChange={handleChange}
                     type="email" 
-                    className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors text-sm" 
+                    disabled={isSubmitting}
+                    className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors text-sm disabled:opacity-50" 
                  />
               </div>
 
@@ -194,7 +188,8 @@ export const RequestDemo: React.FC = () => {
                         name="facilities"
                         value={formData.facilities}
                         onChange={handleChange}
-                        className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors text-sm appearance-none"
+                        disabled={isSubmitting}
+                        className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors text-sm appearance-none disabled:opacity-50"
                     >
                        <option>Single Location</option>
                        <option>2 - 5 Locations</option>
@@ -210,8 +205,9 @@ export const RequestDemo: React.FC = () => {
                         value={formData.beds}
                         onChange={handleChange}
                         type="text" 
+                        disabled={isSubmitting}
                         placeholder="e.g. 500" 
-                        className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors text-sm" 
+                        className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors text-sm disabled:opacity-50" 
                     />
                  </div>
               </div>
@@ -222,7 +218,8 @@ export const RequestDemo: React.FC = () => {
                     name="deployment"
                     value={formData.deployment}
                     onChange={handleChange}
-                    className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors text-sm appearance-none"
+                    disabled={isSubmitting}
+                    className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors text-sm appearance-none disabled:opacity-50"
                  >
                     <option>On-Premise (Air-gapped)</option>
                     <option>Hybrid Cloud</option>
@@ -238,7 +235,8 @@ export const RequestDemo: React.FC = () => {
                     value={formData.message}
                     onChange={handleChange}
                     rows={3} 
-                    className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors text-sm"
+                    disabled={isSubmitting}
+                    className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors text-sm disabled:opacity-50"
                  ></textarea>
               </div>
               
@@ -247,7 +245,16 @@ export const RequestDemo: React.FC = () => {
                 <span className="text-xs text-[#71717A]">I confirm this request is for institutional evaluation purposes and I am authorized to represent this organization.</span>
               </div>
 
-              <Button className="w-full h-12 text-sm font-semibold">Schedule Demonstration</Button>
+              <Button disabled={isSubmitting} className="w-full h-12 text-sm font-semibold">
+                {isSubmitting ? (
+                    <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Processing Request...
+                    </>
+                ) : (
+                    "Schedule Demonstration"
+                )}
+              </Button>
             </form>
           </div>
         </div>
