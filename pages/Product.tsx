@@ -1,17 +1,17 @@
 import React from 'react';
 import { Container } from '../components/ui/Container';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { 
   Shield, Users, Activity, Database, 
   Settings, Layers, Network, Lock, 
   FileJson, Zap, ArrowRight, LayoutTemplate,
-  GitBranch, Server, Terminal
+  GitBranch, Server, Terminal, Cpu
 } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 
 // Technical Badge Component
 const TechBadge = ({ children }: { children?: React.ReactNode }) => (
-  <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono font-medium bg-[#171717] border border-[#262626] text-blue-400 tracking-tight">
+  <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono font-medium bg-blue-500/10 border border-blue-500/20 text-blue-400 tracking-tight">
     {children}
   </span>
 );
@@ -35,9 +35,21 @@ const FeatureRow = ({ title, desc, icon: Icon, delay }: any) => (
 );
 
 export const Product: React.FC = () => {
+  const { scrollY } = useScroll();
+  
+  // Dashboard Animation Values
+  const rotateX = useTransform(scrollY, [0, 500], [0, 5]);
+  const y = useTransform(scrollY, [0, 500], [0, 50]);
+  const opacity = useTransform(scrollY, [0, 400], [1, 0.5]);
+  const scale = useTransform(scrollY, [0, 500], [1, 0.98]);
+
   return (
-    <div className="pt-32 pb-20 bg-[#050505] min-h-screen">
-      <Container>
+    <div className="pt-32 pb-20 bg-[#050505] min-h-screen relative overflow-hidden">
+      {/* Ambient Background */}
+      <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-blue-900/10 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-indigo-900/5 rounded-full blur-[100px] pointer-events-none" />
+
+      <Container className="relative z-10">
         
         {/* Header Section */}
         <div className="mb-32 border-b border-[#1F1F1F] pb-20">
@@ -73,12 +85,17 @@ export const Product: React.FC = () => {
 
             {/* Architecture Abstract Visual */}
             <motion.div 
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.4, duration: 0.8 }}
-              className="flex-1 w-full"
+              style={{ rotateX, y, opacity, scale }}
+              initial={{ opacity: 0, scale: 0.95, y: 40 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+              className="flex-1 w-full relative perspective-[2000px] group"
             >
-              <div className="relative rounded-xl border border-[#262626] bg-[#0A0A0A] p-6 shadow-2xl">
+              {/* Holographic Glow */}
+              <div className="absolute -inset-1 bg-gradient-to-b from-blue-500/10 via-hosp-gold/5 to-transparent blur-3xl opacity-40 rounded-[2rem] group-hover:opacity-60 transition-opacity duration-700"></div>
+
+              {/* Main Interface Frame */}
+              <div className="relative rounded-xl border border-white/10 bg-[#0A0A0A]/80 backdrop-blur-xl shadow-[0_0_0_1px_rgba(255,255,255,0.05),0_50px_100px_-20px_rgba(0,0,0,0.5)] overflow-hidden ring-1 ring-white/5 p-6">
                 <div className="absolute inset-0 bg-grid-pattern opacity-10 pointer-events-none" />
                 <div className="absolute top-0 right-0 p-4 flex gap-2">
                   <div className="w-2 h-2 rounded-full bg-[#262626]" />
@@ -146,7 +163,7 @@ export const Product: React.FC = () => {
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              className="md:col-span-6 lg:col-span-8 row-span-2 p-8 rounded-xl bg-[#0A0A0A] border border-[#1F1F1F] hover:border-[#333] transition-all group relative overflow-hidden"
+              className="md:col-span-6 lg:col-span-8 row-span-2 p-8 rounded-xl bg-[#0A0A0A]/50 backdrop-blur-sm border border-[#1F1F1F] hover:border-[#333] transition-all group relative overflow-hidden"
             >
               <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(59,130,246,0.1)_50%,transparent_75%,transparent_100%)] bg-[length:250%_250%,100%_100%] bg-[position:-100%_0,0_0] bg-no-repeat transition-[background-position_0s] duration-[1500ms] group-hover:bg-[position:200%_0,0_0]" />
               <div className="relative z-10 h-full flex flex-col">
@@ -173,7 +190,7 @@ export const Product: React.FC = () => {
             </motion.div>
 
             {/* Triage */}
-            <motion.div className="md:col-span-3 lg:col-span-4 p-6 rounded-xl bg-[#0A0A0A] border border-[#1F1F1F] hover:border-[#333] transition-all group">
+            <motion.div className="md:col-span-3 lg:col-span-4 p-6 rounded-xl bg-[#0A0A0A]/50 backdrop-blur-sm border border-[#1F1F1F] hover:border-[#333] transition-all group">
               <div className="flex justify-between items-start mb-4">
                 <Activity className="w-6 h-6 text-blue-500" />
                 <TechBadge>ALGORITHM</TechBadge>
@@ -185,7 +202,7 @@ export const Product: React.FC = () => {
             </motion.div>
 
             {/* Security */}
-            <motion.div className="md:col-span-3 lg:col-span-4 p-6 rounded-xl bg-[#0A0A0A] border border-[#1F1F1F] hover:border-[#333] transition-all group">
+            <motion.div className="md:col-span-3 lg:col-span-4 p-6 rounded-xl bg-[#0A0A0A]/50 backdrop-blur-sm border border-[#1F1F1F] hover:border-[#333] transition-all group">
               <div className="flex justify-between items-start mb-4">
                 <Lock className="w-6 h-6 text-blue-500" />
                 <TechBadge>AES-256</TechBadge>
@@ -197,7 +214,7 @@ export const Product: React.FC = () => {
             </motion.div>
 
             {/* Inventory */}
-            <motion.div className="md:col-span-3 lg:col-span-4 p-6 rounded-xl bg-[#0A0A0A] border border-[#1F1F1F] hover:border-[#333] transition-all group">
+            <motion.div className="md:col-span-3 lg:col-span-4 p-6 rounded-xl bg-[#0A0A0A]/50 backdrop-blur-sm border border-[#1F1F1F] hover:border-[#333] transition-all group">
               <div className="flex justify-between items-start mb-4">
                 <Database className="w-6 h-6 text-blue-500" />
                 <TechBadge>REAL-TIME</TechBadge>
@@ -209,7 +226,7 @@ export const Product: React.FC = () => {
             </motion.div>
 
             {/* Audit */}
-            <motion.div className="md:col-span-3 lg:col-span-4 p-6 rounded-xl bg-[#0A0A0A] border border-[#1F1F1F] hover:border-[#333] transition-all group">
+            <motion.div className="md:col-span-3 lg:col-span-4 p-6 rounded-xl bg-[#0A0A0A]/50 backdrop-blur-sm border border-[#1F1F1F] hover:border-[#333] transition-all group">
               <div className="flex justify-between items-start mb-4">
                 <Shield className="w-6 h-6 text-blue-500" />
                 <TechBadge>IMMUTABLE</TechBadge>
@@ -277,7 +294,7 @@ export const Product: React.FC = () => {
           
           <div className="relative">
              <div className="sticky top-32">
-                <div className="p-8 rounded-2xl bg-[#0A0A0A] border border-[#1F1F1F] relative overflow-hidden">
+                <div className="p-8 rounded-2xl bg-[#0A0A0A]/80 backdrop-blur-xl border border-[#1F1F1F] relative overflow-hidden">
                    <div className="absolute top-0 right-0 p-8 opacity-20">
                       <Settings className="w-40 h-40 text-[#52525B] animate-[spin_60s_linear_infinite]" />
                    </div>

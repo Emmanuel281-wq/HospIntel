@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Container } from './ui/Container';
-import { MessageCircle, Github, Twitter, Linkedin, Activity, Server, Shield } from 'lucide-react';
+import { MessageCircle, Twitter, Linkedin, Server, Shield } from 'lucide-react';
 
 export const Footer: React.FC = () => {
   return (
@@ -23,13 +23,12 @@ export const Footer: React.FC = () => {
               </span>
             </Link>
             <p className="text-[#71717A] mb-8 leading-relaxed">
-              The operating system for nations that value resilience. 
-              Built for zero-downtime performance in mission-critical healthcare environments.
+              The operating system for resilient healthcare. 
+              Built for high availability in mission-critical environments.
             </p>
             <div className="flex gap-4">
-               <a href="#" className="text-[#52525B] hover:text-white transition-colors"><Twitter className="w-4 h-4" /></a>
-               <a href="#" className="text-[#52525B] hover:text-white transition-colors"><Github className="w-4 h-4" /></a>
-               <a href="#" className="text-[#52525B] hover:text-white transition-colors"><Linkedin className="w-4 h-4" /></a>
+               <a href="#" className="text-[#52525B] hover:text-white transition-colors" aria-label="X (Twitter)"><Twitter className="w-4 h-4" /></a>
+               <a href="#" className="text-[#52525B] hover:text-white transition-colors" aria-label="LinkedIn"><Linkedin className="w-4 h-4" /></a>
             </div>
           </div>
           
@@ -38,10 +37,10 @@ export const Footer: React.FC = () => {
             <h4 className="text-white font-bold mb-6">Product</h4>
             <ul className="space-y-4 text-[#A1A1AA]">
               <li><Link to="/product" className="hover:text-blue-400 transition-colors">Core Architecture</Link></li>
-              <li><Link to="/security" className="hover:text-blue-400 transition-colors">Zero Trust Security</Link></li>
+              <li><Link to="/security" className="hover:text-blue-400 transition-colors">Secure Design</Link></li>
               <li><Link to="/technology" className="hover:text-blue-400 transition-colors">Sync Engine</Link></li>
               <li><Link to="/migration" className="hover:text-blue-400 transition-colors">Data Migration</Link></li>
-              <li><Link to="/request-demo" className="hover:text-blue-400 transition-colors">Enterprise Pricing</Link></li>
+              <li><Link to="/request-demo" className="hover:text-blue-400 transition-colors">Request Access</Link></li>
             </ul>
           </div>
 
@@ -53,7 +52,7 @@ export const Footer: React.FC = () => {
               <li><Link to="/insights" className="hover:text-blue-400 transition-colors">Whitepapers</Link></li>
               <li><Link to="/technology" className="hover:text-blue-400 transition-colors">System Topology</Link></li>
               <li><Link to="/resources/api" className="hover:text-blue-400 transition-colors">API Documentation</Link></li>
-              <li><Link to="/resources/sla" className="hover:text-blue-400 transition-colors">SLA Guarantee</Link></li>
+              <li><Link to="/resources/sla" className="hover:text-blue-400 transition-colors">Support Targets</Link></li>
             </ul>
           </div>
 
@@ -62,7 +61,7 @@ export const Footer: React.FC = () => {
             <h4 className="text-white font-bold mb-6">Company</h4>
             <ul className="space-y-4 text-[#A1A1AA]">
               <li><Link to="/about" className="hover:text-blue-400 transition-colors">Manifesto</Link></li>
-              <li><Link to="/contact" className="hover:text-blue-400 transition-colors">Contact Offices</Link></li>
+              <li><Link to="/contact" className="hover:text-blue-400 transition-colors">Contact Us</Link></li>
               <li><Link to="/about" className="hover:text-blue-400 transition-colors">Careers</Link></li>
               <li><a href="https://wa.me/2347076627159" target="_blank" rel="noopener noreferrer" className="hover:text-green-400 transition-colors flex items-center gap-2"><MessageCircle className="w-3 h-3" /> WhatsApp</a></li>
             </ul>
@@ -74,7 +73,7 @@ export const Footer: React.FC = () => {
             <ul className="space-y-4 text-[#A1A1AA]">
               <li><Link to="/legal/privacy" className="hover:text-blue-400 transition-colors">Privacy Policy</Link></li>
               <li><Link to="/legal/terms" className="hover:text-blue-400 transition-colors">Terms of Service</Link></li>
-              <li><Link to="/legal/compliance" className="hover:text-blue-400 transition-colors">Compliance (NDPR)</Link></li>
+              <li><Link to="/legal/compliance" className="hover:text-blue-400 transition-colors">Compliance</Link></li>
             </ul>
           </div>
         </div>
@@ -98,14 +97,14 @@ export const Footer: React.FC = () => {
              
              <div className="flex items-center gap-2 text-[10px] text-[#52525B] font-mono">
                 <Shield className="w-3 h-3" />
-                <span>SOC2_TYPE_II</span>
+                <span>SECURITY_FIRST</span>
              </div>
              
              <div className="h-4 w-px bg-[#262626]"></div>
              
              <div className="flex items-center gap-2 text-[10px] text-[#52525B] font-mono">
                 <Server className="w-3 h-3" />
-                <span>v2.4.0</span>
+                <span>v1.0.0</span>
              </div>
           </div>
         </div>

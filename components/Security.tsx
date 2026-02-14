@@ -42,14 +42,14 @@ export const Security: React.FC = () => {
         <motion.div style={{ y: headerY }} className="text-center max-w-3xl mx-auto mb-20">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0F0F0F] border border-[#262626] text-[#52525B] text-[10px] font-mono uppercase tracking-widest mb-6">
             <ShieldAlert className="w-3 h-3" />
-            <span>Zero Trust Architecture</span>
+            <span>Secure Architecture</span>
           </div>
           <h2 className="text-3xl md:text-4xl font-bold text-[#EDEDED] mb-6">
             Security as Architecture
           </h2>
           <p className="text-[#A1A1AA] text-lg">
-            HospIntel implements a zero-trust architecture. Every node, user, and device is strictly authenticated. 
-            Data is encrypted at rest and in transit.
+            HospIntel implements a security-first architecture. Every node, user, and device is strictly authenticated. 
+            Data is encrypted at rest and in transit using industry-standard protocols.
           </p>
         </motion.div>
 

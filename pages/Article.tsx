@@ -139,8 +139,8 @@ const ARTICLES: Record<string, any> = {
     )
   },
   "network-outage-postmortem": {
-    title: "Surviving the Network Cut: A Post-Mortem",
-    subtitle: "Analyzing a 12-hour ISP outage at a Level 1 Trauma Center.",
+    title: "Resilience Modeling: Network Partitions",
+    subtitle: "Simulating a 12-hour ISP outage and maintaining 100% uptime in disconnected environments.",
     date: "September 28, 2026",
     readTime: "6 min read",
     author: "Ops Team",
@@ -148,39 +148,39 @@ const ARTICLES: Record<string, any> = {
     content: (
       <>
         <p className="lead">
-          On September 24th, a major fiber cut severed connectivity to one of our largest deployment sites in Abuja. For 12 hours, the hospital had zero connection to the outside world. This is the timeline of how HospIntel performed.
+          Fiber cuts and ISP failures are a reality of infrastructure in developing markets. We model our system behavior against a "12-hour cut" scenario to ensure clinical continuity.
         </p>
 
-        <h3>Incident Timeline</h3>
+        <h3>Incident Simulation</h3>
         <ul className="space-y-4 border-l border-[#262626] pl-6 my-8">
             <li className="relative">
                 <div className="absolute -left-[29px] top-1 w-3 h-3 rounded-full bg-red-500"></div>
-                <strong className="text-white block">08:14 AM</strong>
-                <span className="text-[#A1A1AA]">Fiber cut reported. WAN uplink lost. Cloud API unreachable.</span>
+                <strong className="text-white block">T-Minus 0</strong>
+                <span className="text-[#A1A1AA]">Fiber cut simulation. WAN uplink lost. Cloud API unreachable.</span>
             </li>
             <li className="relative">
                 <div className="absolute -left-[29px] top-1 w-3 h-3 rounded-full bg-blue-500"></div>
-                <strong className="text-white block">08:14 AM (+300ms)</strong>
+                <strong className="text-white block">T-Plus 300ms</strong>
                 <span className="text-[#A1A1AA]">Local nodes detect timeout. Gossip protocol switches to LAN-only mode. UI shows "Offline Mode" badge.</span>
             </li>
             <li className="relative">
                 <div className="absolute -left-[29px] top-1 w-3 h-3 rounded-full bg-blue-500"></div>
-                <strong className="text-white block">10:00 AM</strong>
-                <span className="text-[#A1A1AA]">Peak patient inflow. 450 active sessions. Triage continues using local logic gates. No slowdown in interface response.</span>
+                <strong className="text-white block">T-Plus 2 Hours</strong>
+                <span className="text-[#A1A1AA]">Peak load simulation. Triage continues using local logic gates. No slowdown in interface response observed.</span>
             </li>
             <li className="relative">
                 <div className="absolute -left-[29px] top-1 w-3 h-3 rounded-full bg-green-500"></div>
-                <strong className="text-white block">08:30 PM</strong>
-                <span className="text-[#A1A1AA]">Uplink restored. 12,400 pending mutations queued for upload. Background sync initiates.</span>
+                <strong className="text-white block">T-Plus 12 Hours</strong>
+                <span className="text-[#A1A1AA]">Uplink restored. Pending mutations queued for upload. Background sync initiates.</span>
             </li>
         </ul>
 
         <h3>The Human Factor</h3>
         <p>
-            The most significant metric was <strong>user behavior</strong>. In previous systems, an outage meant reverting to paper. During this outage, we observed zero switch-to-paper events. Nurses continued using the tablets because the UX remained responsive.
+            The critical metric in this scenario is <strong>user behavior</strong>. In legacy systems, outages force a revert to paper. In our resilience model, nurses continue using tablets because the UX remains responsive, decoupling clinical operations from infrastructure status.
         </p>
         <p>
-            Trust is built when systems work when they shouldn't. By decoupling the UI from the network request, we decoupled clinical operations from infrastructure failures.
+            Trust is built when systems work when they shouldn't. By decoupling the UI from the network request, we decouple clinical operations from infrastructure failures.
         </p>
       </>
     )
@@ -205,7 +205,7 @@ const ARTICLES: Record<string, any> = {
         <p>
             1. <strong>Primary Storage:</strong> The primary copy of the data exists on the physical devices within the hospital (Local Residency).
             <br/>
-            2. <strong>Sync Target:</strong> Our cloud relay servers are hosted in Tier III data centers within Lagos (MainOne MDXi) and Johannesburg.
+            2. <strong>Sync Target:</strong> Our cloud relay servers are architected to reside in Tier III data centers within sovereign borders where required.
         </p>
 
         <h3>Legal Derogations</h3>

@@ -147,8 +147,8 @@ export const Insights: React.FC = () => {
               tag="Infrastructure"
               date="Sep 28, 2026"
               readTime="6 min read"
-              title="Surviving the Network Cut: A Post-Mortem"
-              excerpt="Analyzing a 12-hour ISP outage at a Level 1 Trauma Center and how the local mesh network maintained 100% uptime."
+              title="Resilience Modeling: Network Partitions"
+              excerpt="Simulating a 12-hour ISP outage and how a local mesh network maintains 100% uptime in disconnected environments."
            />
            <ArticleCard 
               slug="data-sovereignty"

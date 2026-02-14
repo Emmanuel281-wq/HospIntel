@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container } from '../components/ui/Container';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { 
   WifiOff, GitMerge, Zap, Database, Globe, 
   Cpu, Network, Code, Server, 
@@ -13,9 +13,9 @@ const TechCard = ({ icon: Icon, title, desc, delay }: any) => (
     whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: true }}
     transition={{ delay, duration: 0.5 }}
-    className="p-8 rounded-xl bg-[#0A0A0A] border border-[#1F1F1F] hover:border-[#333] group transition-all duration-300"
+    className="p-8 rounded-xl bg-[#0A0A0A]/50 backdrop-blur-sm border border-[#1F1F1F] hover:border-[#333] group transition-all duration-300 hover:bg-[#0A0A0A]"
   >
-     <div className="w-12 h-12 rounded-lg bg-[#111] border border-[#262626] flex items-center justify-center text-[#52525B] group-hover:text-blue-500 group-hover:border-blue-500/20 mb-6 transition-all">
+     <div className="w-12 h-12 rounded-lg bg-[#111] border border-[#262626] flex items-center justify-center text-[#52525B] group-hover:text-blue-500 group-hover:border-blue-500/20 mb-6 transition-all shadow-sm">
         <Icon className="w-6 h-6" />
      </div>
      <h3 className="text-xl font-bold text-white mb-3">{title}</h3>
@@ -24,7 +24,7 @@ const TechCard = ({ icon: Icon, title, desc, delay }: any) => (
 );
 
 const CodeBlock = () => (
-  <div className="rounded-lg bg-[#080808] border border-[#1F1F1F] p-4 font-mono text-[10px] md:text-xs leading-relaxed overflow-x-auto">
+  <div className="rounded-lg bg-[#080808] border border-[#1F1F1F] p-4 font-mono text-[10px] md:text-xs leading-relaxed overflow-x-auto shadow-inner">
     <div className="text-[#52525B] mb-2 select-none"># Sync Protocol Definition (v2.4)</div>
     <div className="text-purple-400">type</div> <div className="text-yellow-200 inline">SyncState</div> <div className="text-white inline">=</div> <div className="text-white inline">{`{`}</div>
     <div className="pl-4 text-[#A1A1AA]">
@@ -46,9 +46,20 @@ const CodeBlock = () => (
 );
 
 export const Technology: React.FC = () => {
+  const { scrollY } = useScroll();
+  
+  // Dashboard Animation Values
+  const rotateX = useTransform(scrollY, [0, 500], [0, 5]);
+  const y = useTransform(scrollY, [0, 500], [0, 50]);
+  const opacity = useTransform(scrollY, [0, 400], [1, 0.5]);
+  const scale = useTransform(scrollY, [0, 500], [1, 0.98]);
+
   return (
-    <div className="pt-32 pb-20 bg-[#050505] min-h-screen">
-      <Container>
+    <div className="pt-32 pb-20 bg-[#050505] min-h-screen relative overflow-hidden">
+      {/* Ambient Background */}
+      <div className="absolute top-[-20%] left-[-10%] w-[1000px] h-[1000px] bg-blue-950/20 rounded-full blur-[150px] pointer-events-none" />
+      
+      <Container className="relative z-10">
          {/* Hero Header */}
          <div className="max-w-4xl mb-24">
             <motion.div 
@@ -84,13 +95,18 @@ export const Technology: React.FC = () => {
          {/* Architecture Visualization */}
          <div className="grid lg:grid-cols-2 gap-16 mb-32 items-center">
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
+              style={{ rotateX, y, opacity, scale }}
+              initial={{ opacity: 0, scale: 0.95, y: 40 }}
+              whileInView={{ opacity: 1, scale: 1, y: 0 }}
               viewport={{ once: true }}
-              className="relative"
+              transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+              className="relative perspective-[2000px] group"
             >
-               <div className="absolute inset-0 bg-blue-500/5 blur-3xl -z-10 rounded-full" />
-               <div className="rounded-xl border border-[#262626] bg-[#0A0A0A] p-1 shadow-2xl">
+               {/* Holographic Glow */}
+               <div className="absolute -inset-1 bg-gradient-to-b from-blue-500/10 via-hosp-gold/5 to-transparent blur-3xl opacity-40 rounded-[2rem] group-hover:opacity-60 transition-opacity duration-700"></div>
+               
+               {/* Main Interface Frame */}
+               <div className="rounded-xl border border-white/10 bg-[#0A0A0A]/80 backdrop-blur-xl shadow-[0_0_0_1px_rgba(255,255,255,0.05),0_50px_100px_-20px_rgba(0,0,0,0.5)] overflow-hidden relative ring-1 ring-white/5 p-1">
                   <div className="rounded-lg bg-[#050505] border border-[#1F1F1F] p-6 relative overflow-hidden">
                      <div className="flex justify-between items-center mb-6 border-b border-[#1F1F1F] pb-4">
                         <div className="flex items-center gap-2">
@@ -182,7 +198,7 @@ export const Technology: React.FC = () => {
          </div>
 
          {/* Protocol Support */}
-         <div className="bg-[#0A0A0A] border border-[#1F1F1F] rounded-2xl p-10 relative overflow-hidden">
+         <div className="bg-[#0A0A0A]/50 backdrop-blur-sm border border-[#1F1F1F] rounded-2xl p-10 relative overflow-hidden">
             <div className="absolute top-0 right-0 p-10 opacity-5">
                <Server className="w-64 h-64" />
             </div>

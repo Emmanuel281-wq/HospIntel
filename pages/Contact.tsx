@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Container } from '../components/ui/Container';
 import { Button } from '../components/ui/Button';
-import { Mail, MapPin, Phone, Globe, MessageSquare, Check, AlertTriangle } from 'lucide-react';
+import { Mail, MapPin, Phone, Globe, MessageSquare, Check, AlertTriangle, Send, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export const Contact: React.FC = () => {
@@ -17,7 +17,6 @@ export const Contact: React.FC = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    // Input Hardening: Limit character count to prevent buffer overflow/DoS on mailto
     if (value.length > 2000) return; 
     setFormData(prev => ({ ...prev, [name]: value }));
     if (error) setError(null);
@@ -26,16 +25,12 @@ export const Contact: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Security Validation
     if (formData.message.length > 2000) {
         setError("Message exceeds maximum length (2000 chars).");
         return;
     }
 
-    // Basic sanitization (removing control characters that might exploit mail clients)
     const sanitizedMessage = formData.message.replace(/[^\x20-\x7E\n\r]/g, '');
-
-    // Construct email parameters
     const subject = `HospIntel Inquiry: ${formData.firstName} ${formData.lastName} - ${formData.department}`;
     const body = `Name: ${formData.firstName} ${formData.lastName}
 Email: ${formData.email}
@@ -44,195 +39,252 @@ Department: ${formData.department}
 Message:
 ${sanitizedMessage}`;
 
-    // Trigger mailto with encoded components
+    // Record interaction for Admin (Simulated)
+    try {
+        const existingLeads = JSON.parse(localStorage.getItem('hospintel_leads') || '[]');
+        const newLead = {
+            id: Date.now().toString(),
+            name: `${formData.firstName} ${formData.lastName}`,
+            email: formData.email,
+            type: formData.department,
+            status: 'New',
+            timestamp: new Date().toISOString()
+        };
+        localStorage.setItem('hospintel_leads', JSON.stringify([newLead, ...existingLeads]));
+    } catch (e) {
+        // Silent fail for storage limits
+    }
+
     window.location.href = `mailto:inquiries.hospintel@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     
-    // Show success state in UI
     setIsSubmitted(true);
   };
 
   return (
-    <div className="pt-32 pb-20 bg-[#050505] min-h-screen">
+    <div className="pt-32 pb-20 bg-[#050505] min-h-screen relative overflow-hidden">
+      {/* Background Ambience */}
+      <div className="absolute top-[-20%] right-[-10%] w-[800px] h-[800px] bg-blue-900/10 rounded-full blur-[150px] pointer-events-none" />
+      <div className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-blue-500/5 rounded-full blur-[150px] pointer-events-none" />
+
       <Container>
-        <div className="grid lg:grid-cols-2 gap-20">
-            {/* Left Col: Header & Info */}
-            <div>
-                <motion.div 
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="mb-12"
-                >
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0F0F0F] border border-[#262626] text-[#A1A1AA] text-[10px] font-mono uppercase tracking-widest mb-6">
-                        <MessageSquare className="w-3 h-3" />
-                        <span>Inquiries</span>
-                    </div>
-                    <h1 className="text-4xl md:text-5xl font-bold tracking-tighter text-white mb-6">
-                        Contact <br/>HospIntel.
-                    </h1>
-                    <p className="text-xl text-[#A1A1AA] font-light leading-relaxed">
-                        For enterprise licensing, partnership inquiries, or technical support, please reach out directly to our engineering team in Lagos.
-                    </p>
-                </motion.div>
+        <div className="grid lg:grid-cols-2 gap-20 items-center">
+            {/* Left Col: Immersive 3D Info Card */}
+            <motion.div 
+                initial={{ opacity: 0, x: -30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8 }}
+                className="relative perspective-[2000px] group"
+            >
+                {/* Glow Effect */}
+                <div className="absolute -inset-1 bg-gradient-to-br from-blue-500/20 to-transparent blur-2xl opacity-50 group-hover:opacity-70 transition-opacity duration-1000" />
+                
+                <div className="relative rounded-2xl border border-white/10 bg-[#0A0A0A]/90 backdrop-blur-xl p-8 lg:p-12 overflow-hidden transform transition-transform duration-700 hover:rotate-y-1 hover:rotate-x-1">
+                    <div className="absolute inset-0 bg-grid-pattern opacity-20 pointer-events-none" />
+                    
+                    <div className="relative z-10">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#111] border border-[#262626] text-[#A1A1AA] text-[10px] font-mono uppercase tracking-widest mb-8 shadow-sm">
+                            <MessageSquare className="w-3 h-3 text-blue-500" />
+                            <span>Direct Channel</span>
+                        </div>
 
-                <div className="space-y-12">
-                    <motion.div 
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.1 }}
-                    >
-                        <h3 className="text-white font-bold mb-4 flex items-center gap-2">
-                            <MapPin className="w-4 h-4 text-blue-500" /> Operational Base
-                        </h3>
-                        <p className="text-[#A1A1AA] leading-relaxed">
-                            Lagos, Nigeria
+                        <h1 className="text-4xl md:text-5xl font-bold tracking-tighter text-white mb-6">
+                            Contact <br/>
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-600">HospIntel HQ.</span>
+                        </h1>
+                        
+                        <p className="text-lg text-[#A1A1AA] font-light leading-relaxed mb-12">
+                            For enterprise licensing, partnership inquiries, or technical support, connect directly with our engineering team in Lagos.
                         </p>
-                    </motion.div>
 
-                    <motion.div 
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.2 }}
-                        className="grid grid-cols-2 gap-8"
-                    >
-                        <div>
-                            <h3 className="text-white font-bold mb-4 flex items-center gap-2">
-                                <Mail className="w-4 h-4 text-blue-500" /> Email
-                            </h3>
-                            <ul className="space-y-2 text-[#A1A1AA] text-sm">
-                                <li>
-                                    <a href="mailto:inquiries.hospintel@gmail.com" className="hover:text-blue-400 transition-colors">
+                        <div className="space-y-8">
+                            <div className="flex items-start gap-4 group/item">
+                                <div className="mt-1 w-10 h-10 rounded-lg bg-[#0F0F0F] border border-[#262626] flex items-center justify-center text-blue-500 group-hover/item:border-blue-500/30 group-hover/item:bg-blue-500/10 transition-all">
+                                    <MapPin className="w-5 h-5" />
+                                </div>
+                                <div>
+                                    <h3 className="text-white font-bold text-sm mb-1">Operational Base</h3>
+                                    <p className="text-[#71717A] text-sm">Lagos, Nigeria</p>
+                                </div>
+                            </div>
+
+                            <div className="flex items-start gap-4 group/item">
+                                <div className="mt-1 w-10 h-10 rounded-lg bg-[#0F0F0F] border border-[#262626] flex items-center justify-center text-blue-500 group-hover/item:border-blue-500/30 group-hover/item:bg-blue-500/10 transition-all">
+                                    <Mail className="w-5 h-5" />
+                                </div>
+                                <div>
+                                    <h3 className="text-white font-bold text-sm mb-1">Electronic Mail</h3>
+                                    <a href="mailto:inquiries.hospintel@gmail.com" className="text-[#71717A] text-sm hover:text-blue-400 transition-colors">
                                         inquiries.hospintel@gmail.com
                                     </a>
-                                </li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h3 className="text-white font-bold mb-4 flex items-center gap-2">
-                                <Phone className="w-4 h-4 text-blue-500" /> Phone
-                            </h3>
-                            <ul className="space-y-2 text-[#A1A1AA] text-sm">
-                                <li>+234 707 662 7159</li>
-                                <li className="text-xs text-[#52525B] mt-1">Mon-Fri, 8am - 6pm WAT</li>
-                            </ul>
-                        </div>
-                    </motion.div>
-                    
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.3 }}
-                    >
-                        <h3 className="text-white font-bold mb-4 flex items-center gap-2">
-                            <Globe className="w-4 h-4 text-blue-500" /> Coverage
-                        </h3>
-                        <p className="text-[#A1A1AA] leading-relaxed">
-                            Serving Healthcare Institutions Across Africa.
-                        </p>
-                    </motion.div>
-                </div>
-            </div>
+                                </div>
+                            </div>
 
-            {/* Right Col: Form */}
-            <motion.div 
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.4 }}
-                className="bg-[#0A0A0A] border border-[#1F1F1F] rounded-2xl p-8 lg:p-12 h-fit"
-            >
-                {isSubmitted ? (
-                    <div className="text-center py-12">
-                        <div className="w-16 h-16 rounded-full bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mx-auto mb-6 text-blue-500">
-                           <Check className="w-8 h-8" />
+                            <div className="flex items-start gap-4 group/item">
+                                <div className="mt-1 w-10 h-10 rounded-lg bg-[#0F0F0F] border border-[#262626] flex items-center justify-center text-blue-500 group-hover/item:border-blue-500/30 group-hover/item:bg-blue-500/10 transition-all">
+                                    <Phone className="w-5 h-5" />
+                                </div>
+                                <div>
+                                    <h3 className="text-white font-bold text-sm mb-1">Secure Line</h3>
+                                    <p className="text-[#71717A] text-sm">+234 707 662 7159</p>
+                                    <span className="text-[10px] text-[#52525B] uppercase tracking-wider">Mon-Fri, 8am - 6pm WAT</span>
+                                </div>
+                            </div>
                         </div>
-                        <h3 className="text-2xl font-bold text-white mb-4">Opening Email Client...</h3>
-                        <p className="text-[#A1A1AA] mb-8">
-                           We have prepared a draft in your default email client addressed to inquiries.hospintel@gmail.com.
-                        </p>
-                        <Button variant="outline" onClick={() => setIsSubmitted(false)}>Reset Form</Button>
+
+                        <div className="mt-12 pt-8 border-t border-[#1F1F1F]">
+                            <div className="flex items-center gap-2 text-xs font-mono text-[#52525B]">
+                                <Globe className="w-3 h-3" />
+                                <span>SERVING HEALTHCARE INSTITUTIONS PAN-AFRICA</span>
+                            </div>
+                        </div>
                     </div>
-                ) : (
-                    <>
-                        <h3 className="text-xl font-bold text-white mb-6">Send a Message</h3>
-                        <form className="space-y-5" onSubmit={handleSubmit}>
-                            {error && (
-                                <div className="p-3 bg-red-500/10 border border-red-500/20 rounded flex items-center gap-2 text-red-400 text-sm">
-                                    <AlertTriangle className="w-4 h-4" /> {error}
+                </div>
+            </motion.div>
+
+            {/* Right Col: Glassmorphic Form */}
+            <motion.div 
+                initial={{ opacity: 0, x: 30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                className="relative"
+            >
+                <div className="absolute inset-0 bg-blue-500/5 blur-3xl -z-10 rounded-full" />
+                <div className="bg-[#0A0A0A]/80 backdrop-blur-xl border border-[#1F1F1F] rounded-2xl p-8 lg:p-10 shadow-2xl relative overflow-hidden">
+                    {/* Decorative Top Border */}
+                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-600 via-blue-400 to-transparent opacity-50" />
+
+                    {isSubmitted ? (
+                        <div className="text-center py-20">
+                            <motion.div 
+                                initial={{ scale: 0 }} 
+                                animate={{ scale: 1 }}
+                                className="w-20 h-20 rounded-full bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mx-auto mb-8 text-blue-500 shadow-[0_0_30px_rgba(59,130,246,0.2)]"
+                            >
+                               <Check className="w-10 h-10" />
+                            </motion.div>
+                            <h3 className="text-2xl font-bold text-white mb-4">Transmission Initiated</h3>
+                            <p className="text-[#A1A1AA] mb-10 max-w-sm mx-auto leading-relaxed">
+                               We have opened your default email client with a secure draft addressed to <strong>inquiries.hospintel@gmail.com</strong>.
+                            </p>
+                            <Button variant="outline" onClick={() => setIsSubmitted(false)} className="mx-auto">
+                                Reset Communication
+                            </Button>
+                        </div>
+                    ) : (
+                        <>
+                            <div className="flex items-center justify-between mb-8">
+                                <h3 className="text-xl font-bold text-white">Send Secure Message</h3>
+                                <div className="flex gap-1.5">
+                                    <div className="w-2 h-2 rounded-full bg-[#262626]" />
+                                    <div className="w-2 h-2 rounded-full bg-[#262626]" />
+                                    <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
                                 </div>
-                            )}
-                            <div className="grid md:grid-cols-2 gap-5">
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-mono text-[#71717A] uppercase tracking-wider">First Name</label>
+                            </div>
+
+                            <form className="space-y-6" onSubmit={handleSubmit}>
+                                {error && (
+                                    <motion.div 
+                                        initial={{ opacity: 0, y: -10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        className="p-3 bg-red-500/10 border border-red-500/20 rounded flex items-center gap-2 text-red-400 text-xs font-mono"
+                                    >
+                                        <AlertTriangle className="w-4 h-4" /> {error}
+                                    </motion.div>
+                                )}
+                                
+                                <div className="grid md:grid-cols-2 gap-6">
+                                    <div className="space-y-2 group">
+                                        <label className="text-[10px] font-mono text-[#71717A] uppercase tracking-wider group-focus-within:text-blue-400 transition-colors">First Name</label>
+                                        <input 
+                                          required 
+                                          name="firstName"
+                                          value={formData.firstName}
+                                          onChange={handleChange}
+                                          maxLength={50}
+                                          type="text" 
+                                          className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 transition-all text-sm placeholder:text-[#333]"
+                                          placeholder="Enter name"
+                                        />
+                                    </div>
+                                    <div className="space-y-2 group">
+                                        <label className="text-[10px] font-mono text-[#71717A] uppercase tracking-wider group-focus-within:text-blue-400 transition-colors">Last Name</label>
+                                        <input 
+                                          required 
+                                          name="lastName"
+                                          value={formData.lastName}
+                                          onChange={handleChange}
+                                          maxLength={50}
+                                          type="text" 
+                                          className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 transition-all text-sm placeholder:text-[#333]"
+                                          placeholder="Enter surname"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="space-y-2 group">
+                                    <label className="text-[10px] font-mono text-[#71717A] uppercase tracking-wider group-focus-within:text-blue-400 transition-colors">Work Email</label>
                                     <input 
                                       required 
-                                      name="firstName"
-                                      value={formData.firstName}
+                                      name="email"
+                                      value={formData.email}
                                       onChange={handleChange}
-                                      maxLength={50}
-                                      type="text" 
-                                      className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors text-sm" 
+                                      type="email" 
+                                      className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 transition-all text-sm placeholder:text-[#333]"
+                                      placeholder="name@hospital.org"
                                     />
                                 </div>
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-mono text-[#71717A] uppercase tracking-wider">Last Name</label>
-                                    <input 
+
+                                <div className="space-y-2 group">
+                                    <label className="text-[10px] font-mono text-[#71717A] uppercase tracking-wider group-focus-within:text-blue-400 transition-colors">Department</label>
+                                    <div className="relative">
+                                        <select 
+                                        name="department"
+                                        value={formData.department}
+                                        onChange={handleChange}
+                                        className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 transition-all text-sm appearance-none cursor-pointer"
+                                        >
+                                            <option>Enterprise Licensing</option>
+                                            <option>Technical Support</option>
+                                            <option>Media & Press</option>
+                                            <option>Investor Relations</option>
+                                        </select>
+                                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                                            <svg className="w-4 h-4 text-[#52525B]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="space-y-2 group">
+                                    <div className="flex justify-between">
+                                        <label className="text-[10px] font-mono text-[#71717A] uppercase tracking-wider group-focus-within:text-blue-400 transition-colors">Message Encrypted</label>
+                                        <span className="text-[10px] font-mono text-[#52525B]">{formData.message.length}/2000</span>
+                                    </div>
+                                    <textarea 
                                       required 
-                                      name="lastName"
-                                      value={formData.lastName}
+                                      name="message"
+                                      value={formData.message}
                                       onChange={handleChange}
-                                      maxLength={50}
-                                      type="text" 
-                                      className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors text-sm" 
-                                    />
+                                      maxLength={2000}
+                                      rows={5} 
+                                      className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 transition-all text-sm placeholder:text-[#333] resize-none"
+                                      placeholder="How can we assist your infrastructure?"
+                                    ></textarea>
                                 </div>
-                            </div>
 
-                            <div className="space-y-2">
-                                <label className="text-[10px] font-mono text-[#71717A] uppercase tracking-wider">Work Email</label>
-                                <input 
-                                  required 
-                                  name="email"
-                                  value={formData.email}
-                                  onChange={handleChange}
-                                  type="email" 
-                                  className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors text-sm" 
-                                />
-                            </div>
-
-                            <div className="space-y-2">
-                                <label className="text-[10px] font-mono text-[#71717A] uppercase tracking-wider">Department</label>
-                                <select 
-                                  name="department"
-                                  value={formData.department}
-                                  onChange={handleChange}
-                                  className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors text-sm appearance-none"
-                                >
-                                    <option>Enterprise Licensing</option>
-                                    <option>Technical Support</option>
-                                    <option>Media & Press</option>
-                                    <option>Investor Relations</option>
-                                </select>
-                            </div>
-
-                            <div className="space-y-2">
-                                <div className="flex justify-between">
-                                    <label className="text-[10px] font-mono text-[#71717A] uppercase tracking-wider">Message</label>
-                                    <span className="text-[10px] font-mono text-[#52525B]">{formData.message.length}/2000</span>
+                                <Button className="w-full h-12 mt-2 group shadow-[0_0_20px_rgba(59,130,246,0.15)]">
+                                    <span>Initiate Transfer</span>
+                                    <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                                </Button>
+                                
+                                <div className="text-center">
+                                    <p className="text-[10px] text-[#52525B]">
+                                        Secure TLS 1.3 Connection • End-to-End Encrypted
+                                    </p>
                                 </div>
-                                <textarea 
-                                  required 
-                                  name="message"
-                                  value={formData.message}
-                                  onChange={handleChange}
-                                  maxLength={2000}
-                                  rows={5} 
-                                  className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors text-sm"
-                                ></textarea>
-                            </div>
-
-                            <Button className="w-full h-12 mt-2">Send Message</Button>
-                        </form>
-                    </>
-                )}
+                            </form>
+                        </>
+                    )}
+                </div>
             </motion.div>
         </div>
       </Container>

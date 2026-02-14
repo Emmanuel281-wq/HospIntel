@@ -26,28 +26,28 @@ export const Compliance: React.FC = () => {
         <div className="max-w-4xl mb-16">
            <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">Regulatory Compliance</h1>
            <p className="text-xl text-[#A1A1AA] font-light leading-relaxed">
-             We meet or exceed the strictest standards for healthcare data protection across Nigeria and Africa.
+             Our platform is engineered to align with strict standards for healthcare data protection across Nigeria and Africa.
            </p>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-20">
            <ComplianceCard 
              title="NDPR / NDPA"
-             desc="Fully compliant with the Nigeria Data Protection Act (2023). We ensure lawful processing and data sovereignty for Nigerian institutions."
+             desc="Designed to align with the Nigeria Data Protection Act (2023). We ensure lawful processing and data sovereignty capabilities for Nigerian institutions."
              icon={ShieldCheck}
-             tags={['DPCO Audited', 'Nigeria First']}
+             tags={['Privacy Focused', 'Nigeria First']}
            />
            <ComplianceCard 
              title="ISO 27001"
-             desc="Certified Information Security Management System (ISMS) covering all aspects of our engineering and operations in Lagos."
+             desc="Security controls follow ISO 27001 Information Security Management System (ISMS) best practices."
              icon={Lock}
-             tags={['International', 'ISMS']}
+             tags={['International Standards', 'ISMS Aligned']}
            />
            <ComplianceCard 
              title="Data Residency"
-             desc="We offer guaranteed local data residency via MainOne (MDXi) in Lagos and Rack Centre to meet regulatory requirements."
+             desc="We offer guaranteed local data residency options to meet regulatory requirements."
              icon={Globe}
-             tags={['Lagos', 'Johannesburg']}
+             tags={['Local Hosting', 'Sovereignty']}
            />
         </div>
 
@@ -55,12 +55,12 @@ export const Compliance: React.FC = () => {
            <div className="max-w-3xl">
               <h2 className="text-2xl font-bold text-white mb-4">Encryption Standards</h2>
               <p className="text-[#A1A1AA] mb-8">
-                 We utilize cryptographic primitives that exceed industry recommendations.
+                 We utilize cryptographic primitives that align with industry recommendations.
               </p>
               <div className="grid md:grid-cols-2 gap-8">
                  <div>
                     <h4 className="text-white font-bold text-sm mb-2">Data At Rest</h4>
-                    <p className="text-sm text-[#71717A]">AES-256-GCM with per-tenant key wrapping via AWS KMS or HashiCorp Vault.</p>
+                    <p className="text-sm text-[#71717A]">AES-256-GCM with per-tenant key wrapping capabilities.</p>
                  </div>
                  <div>
                     <h4 className="text-white font-bold text-sm mb-2">Data In Transit</h4>

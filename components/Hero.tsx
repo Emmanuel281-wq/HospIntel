@@ -153,7 +153,7 @@ export const Hero: React.FC = () => {
                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
                       <div className="bg-[#111] border border-[#262626] rounded p-3 relative overflow-hidden group">
                          <div className="absolute top-0 right-0 p-1 opacity-20 group-hover:opacity-100 transition-opacity"><ArrowUpRight size={10} className="text-white"/></div>
-                         <div className="text-[9px] font-mono text-[#71717A] uppercase mb-1">Total Census</div>
+                         <div className="text-[9px] font-mono text-[#71717A] uppercase mb-1">Demo Census</div>
                          <div className="text-xl font-mono text-white">842 <span className="text-[10px] text-emerald-500">+12%</span></div>
                          <div className="w-full bg-[#262626] h-0.5 mt-2 rounded-full overflow-hidden">
                             <div className="bg-blue-500 h-full w-[85%]"></div>
@@ -279,7 +279,7 @@ export const Hero: React.FC = () => {
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
                 </span>
                 <span className="text-[10px] font-mono font-medium text-[#D4D4D8] tracking-widest uppercase">
-                  Institutional OS v2.4
+                  HospIntel OS v1.0
                 </span>
               </div>
             </motion.div>
@@ -299,8 +299,8 @@ export const Hero: React.FC = () => {
               variants={itemVariants}
               className="text-lg text-[#A1A1AA] mb-10 max-w-xl leading-relaxed font-light tracking-wide"
             >
-              The operating system for nations that value resilience. 
-              Zero downtime, total data sovereignty, and military-grade encryption for the public sector.
+              The operating system for hospitals that value resilience. 
+              High availability, total data sovereignty, and robust encryption for clinical environments.
             </motion.p>
 
             <motion.div 
@@ -311,7 +311,7 @@ export const Hero: React.FC = () => {
                 onClick={() => navigate('/request-demo')}
                 className="group relative w-full sm:w-auto h-12 px-8 rounded-lg overflow-hidden bg-[#EDEDED] text-black font-semibold tracking-tight flex items-center justify-center gap-2 transition-all duration-300 hover:shadow-[0_0_30px_rgba(255,255,255,0.2)]"
               >
-                <span>Deploy HospIntel</span>
+                <span>Request Access</span>
                 <ArrowUpRight className="w-4 h-4 opacity-70 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
               </button>
               

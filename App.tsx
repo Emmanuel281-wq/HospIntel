@@ -12,10 +12,11 @@ const Technology = lazy(() => import('./pages/Technology').then(module => ({ def
 const About = lazy(() => import('./pages/About').then(module => ({ default: module.About })));
 const RequestDemo = lazy(() => import('./pages/RequestDemo').then(module => ({ default: module.RequestDemo })));
 const Insights = lazy(() => import('./pages/Insights').then(module => ({ default: module.Insights })));
-const Article = lazy(() => import('./pages/Article').then(module => ({ default: module.Article }))); // New Article Component
+const Article = lazy(() => import('./pages/Article').then(module => ({ default: module.Article }))); 
 const Contact = lazy(() => import('./pages/Contact').then(module => ({ default: module.Contact })));
 const Migration = lazy(() => import('./pages/Migration').then(module => ({ default: module.Migration })));
 const NotFound = lazy(() => import('./pages/NotFound').then(module => ({ default: module.NotFound })));
+const Admin = lazy(() => import('./pages/Admin').then(module => ({ default: module.Admin }))); // New Admin Route
 
 // Resources
 const Documentation = lazy(() => import('./pages/resources/Documentation').then(module => ({ default: module.Documentation })));
@@ -42,9 +43,10 @@ function App() {
               <Route path="/about" element={<About />} />
               <Route path="/request-demo" element={<RequestDemo />} />
               <Route path="/insights" element={<Insights />} />
-              <Route path="/insights/:slug" element={<Article />} /> {/* Dynamic Article Route */}
+              <Route path="/insights/:slug" element={<Article />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/migration" element={<Migration />} />
+              <Route path="/admin" element={<Admin />} /> {/* Admin Route */}
               
               {/* Resources Routes */}
               <Route path="/resources/documentation" element={<Documentation />} />

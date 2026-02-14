@@ -5,30 +5,67 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
     
     <!-- SECURITY: Content Security Policy -->
-    <!-- Updated to allow data: URIs for scripts and specific CDNs required by the environment -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdn.tailwindcss.com https://esm.sh https://cdn.jsdelivr.net https://ai.studio; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://grainy-gradients.vercel.app; connect-src 'self' https://esm.sh; object-src 'none'; base-uri 'self';" />
     
     <title>HospIntel | Enterprise Hospital Operating System</title>
     
     <!-- SEO Meta Tags -->
-    <meta name="description" content="HospIntel is an offline-first hospital operating system engineered for mission-critical reliability, operational continuity, and zero-downtime performance." />
-    <meta name="keywords" content="Hospital OS, EMR, Healthcare Infrastructure, Offline-first, Hospital Software, Electronic Medical Record, Healthcare IT, Patient Management, Clinical Workflows" />
+    <meta name="description" content="HospIntel is an offline-first hospital operating system engineered for mission-critical reliability in African healthcare. Zero-downtime patient management, billing, and clinical workflows." />
+    <meta name="keywords" content="Hospital OS, EMR Nigeria, Healthcare Infrastructure Africa, Offline-first EMR, Hospital Software Lagos, Electronic Medical Record, Health Tech Africa, Patient Management System" />
     <meta name="author" content="HospIntel Systems Inc." />
     <meta name="robots" content="index, follow" />
     <meta name="theme-color" content="#050505" />
+    <meta name="application-name" content="HospIntel OS" />
     
+    <!-- Geo Tags -->
+    <meta name="geo.region" content="NG-LA" />
+    <meta name="geo.placename" content="Lagos" />
+    <meta name="geo.position" content="6.5244;3.3792" />
+    <meta name="ICBM" content="6.5244, 3.3792" />
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://hospintel.com/" />
     <meta property="og:title" content="HospIntel | Infrastructure for Modern Healthcare" />
     <meta property="og:description" content="An offline-first hospital operating system designed for mission-critical reliability, operational continuity, and zero-downtime performance." />
     <meta property="og:site_name" content="HospIntel" />
+    <meta property="og:image" content="https://hospintel.com/og-image.jpg" />
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:title" content="HospIntel | Enterprise Hospital OS" />
     <meta property="twitter:description" content="Unbreakable healthcare infrastructure. Offline-first, zero-downtime hospital operating system." />
+    <meta property="twitter:image" content="https://hospintel.com/og-image.jpg" />
     
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "HospIntel OS",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "Web, Linux, Android",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD",
+          "availability": "https://schema.org/InStock"
+        },
+        "description": "Offline-first hospital operating system for resilient healthcare operations.",
+        "author": {
+          "@type": "Organization",
+          "name": "HospIntel Systems Inc.",
+          "url": "https://hospintel.com",
+          "email": "inquiries.hospintel@gmail.com",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Lagos",
+            "addressCountry": "NG"
+          }
+        }
+      }
+    </script>
+
     <!-- Performance Hints -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -71,6 +108,7 @@
               'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
               'marquee': 'marquee 40s linear infinite',
               'shimmer': 'shimmer 2s linear infinite',
+              'scan': 'scan 4s linear infinite',
             },
             keyframes: {
               marquee: {
@@ -80,6 +118,10 @@
               shimmer: {
                 '0%': { backgroundPosition: '200% 0' },
                 '100%': { backgroundPosition: '-200% 0' },
+              },
+              scan: {
+                '0%': { top: '0%' },
+                '100%': { top: '100%' },
               }
             }
           }
@@ -133,6 +175,13 @@
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
       }
+      
+      /* Admin Dashboard Specifics */
+      .admin-panel-glass {
+        background: rgba(10, 10, 10, 0.7);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+      }
     </style>
     <script type="importmap">
     {
@@ -144,7 +193,8 @@
         "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
         "react-router-dom": "https://esm.sh/react-router-dom@6.22.3?external=react,react-dom",
         "lucide-react": "https://esm.sh/lucide-react@0.344.0?external=react",
-        "framer-motion": "https://esm.sh/framer-motion@10.18.0?external=react,react-dom"
+        "framer-motion": "https://esm.sh/framer-motion@10.18.0?external=react,react-dom",
+        "recharts": "https://esm.sh/recharts@2.12.0?external=react,react-dom"
       }
     }
     </script>

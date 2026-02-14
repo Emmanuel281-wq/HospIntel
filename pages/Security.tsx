@@ -1,10 +1,10 @@
 import React from 'react';
 import { Container } from '../components/ui/Container';
 import { ShieldCheck, Lock, Server, FileCheck, EyeOff, Key, AlertTriangle, Fingerprint, Scan, Shield, Activity } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 
 const SecurityMetric = ({ label, value, status }: any) => (
-  <div className="p-4 rounded bg-[#0A0A0A] border border-[#1F1F1F] flex items-center justify-between">
+  <div className="p-4 rounded bg-[#0A0A0A]/80 backdrop-blur-sm border border-[#1F1F1F] flex items-center justify-between shadow-sm">
     <div>
       <div className="text-[10px] font-mono text-[#52525B] uppercase mb-1">{label}</div>
       <div className="text-lg font-mono text-white">{value}</div>
@@ -14,9 +14,20 @@ const SecurityMetric = ({ label, value, status }: any) => (
 );
 
 export const Security: React.FC = () => {
+  const { scrollY } = useScroll();
+  
+  // Dashboard Animation Values
+  const rotateX = useTransform(scrollY, [0, 500], [0, 5]);
+  const y = useTransform(scrollY, [0, 500], [0, 50]);
+  const opacity = useTransform(scrollY, [0, 400], [1, 0.5]);
+  const scale = useTransform(scrollY, [0, 500], [1, 0.98]);
+
   return (
-    <div className="pt-32 pb-20 bg-[#050505] min-h-screen">
-      <Container>
+    <div className="pt-32 pb-20 bg-[#050505] min-h-screen relative overflow-hidden">
+      {/* Background Ambience */}
+      <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-green-900/5 rounded-full blur-[150px] pointer-events-none" />
+
+      <Container className="relative z-10">
         {/* Header */}
         <div className="mb-24 relative">
            <motion.div 
@@ -41,37 +52,49 @@ export const Security: React.FC = () => {
         {/* Live Monitor Visualization */}
         <div className="mb-32">
            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Main Threat Map */}
-              <div className="lg:col-span-2 rounded-xl bg-[#080808] border border-[#1F1F1F] p-1 overflow-hidden">
-                 <div className="bg-[#050505] rounded-lg p-6 h-full min-h-[300px] relative overflow-hidden">
-                    <div className="flex justify-between items-center mb-6 relative z-10">
-                       <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                          <Activity className="w-4 h-4 text-blue-500" />
-                          LIVE_THREAT_MONITOR
-                       </h3>
-                       <span className="text-[10px] font-mono text-[#52525B]">REGION: GLOBAL</span>
-                    </div>
-                    
-                    {/* Simulated Graph Lines */}
-                    <div className="absolute inset-0 flex items-end justify-between px-6 pb-0 opacity-20 pointer-events-none">
-                       {[40, 60, 35, 70, 50, 80, 45, 60, 75, 50].map((h, i) => (
-                          <div key={i} className="w-full mx-1 bg-blue-500 transition-all duration-1000" style={{ height: `${h}%` }}></div>
-                       ))}
-                    </div>
-                    
-                    {/* Data Overlay */}
-                    <div className="grid grid-cols-2 gap-8 relative z-10 mt-12">
-                       <div>
-                          <div className="text-[10px] text-[#52525B] mb-1">INTRUSION ATTEMPTS (24H)</div>
-                          <div className="text-3xl font-mono text-white">0</div>
-                       </div>
-                       <div>
-                          <div className="text-[10px] text-[#52525B] mb-1">AUTH SUCCESS RATE</div>
-                          <div className="text-3xl font-mono text-white">99.99%</div>
-                       </div>
+              {/* Main Threat Map with Dashboard Styling */}
+              <motion.div 
+                style={{ rotateX, y, opacity, scale }}
+                initial={{ opacity: 0, scale: 0.95, y: 40 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+                className="lg:col-span-2 relative perspective-[2000px] group"
+              >
+                 {/* Holographic Glow */}
+                 <div className="absolute -inset-1 bg-gradient-to-b from-blue-500/10 via-hosp-gold/5 to-transparent blur-3xl opacity-40 rounded-[2rem] group-hover:opacity-60 transition-opacity duration-700"></div>
+                 
+                 {/* Main Interface Frame */}
+                 <div className="rounded-xl border border-white/10 bg-[#0A0A0A]/80 backdrop-blur-xl shadow-[0_0_0_1px_rgba(255,255,255,0.05),0_50px_100px_-20px_rgba(0,0,0,0.5)] overflow-hidden relative ring-1 ring-white/5 p-1 h-full min-h-[350px]">
+                    <div className="bg-[#050505] rounded-lg p-6 h-full relative overflow-hidden">
+                        <div className="flex justify-between items-center mb-6 relative z-10">
+                           <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                              <Activity className="w-4 h-4 text-blue-500" />
+                              LIVE_THREAT_MONITOR
+                           </h3>
+                           <span className="text-[10px] font-mono text-[#52525B]">REGION: GLOBAL</span>
+                        </div>
+                        
+                        {/* Simulated Graph Lines */}
+                        <div className="absolute inset-0 flex items-end justify-between px-6 pb-0 opacity-20 pointer-events-none">
+                           {[40, 60, 35, 70, 50, 80, 45, 60, 75, 50].map((h, i) => (
+                              <div key={i} className="w-full mx-1 bg-blue-500 transition-all duration-1000" style={{ height: `${h}%` }}></div>
+                           ))}
+                        </div>
+                        
+                        {/* Data Overlay */}
+                        <div className="grid grid-cols-2 gap-8 relative z-10 mt-12">
+                           <div>
+                              <div className="text-[10px] text-[#52525B] mb-1">INTRUSION ATTEMPTS (24H)</div>
+                              <div className="text-3xl font-mono text-white">0</div>
+                           </div>
+                           <div>
+                              <div className="text-[10px] text-[#52525B] mb-1">AUTH SUCCESS RATE</div>
+                              <div className="text-3xl font-mono text-white">99.99%</div>
+                           </div>
+                        </div>
                     </div>
                  </div>
-              </div>
+              </motion.div>
 
               {/* Status Sidebars */}
               <div className="space-y-4">
@@ -132,7 +155,7 @@ export const Security: React.FC = () => {
         </div>
 
         {/* Compliance Strip */}
-        <div className="bg-[#0A0A0A] border border-[#1F1F1F] rounded-xl p-8">
+        <div className="bg-[#0A0A0A]/50 backdrop-blur-sm border border-[#1F1F1F] rounded-xl p-8">
            <div className="flex flex-col md:flex-row items-center justify-between gap-8">
               <div>
                  <h3 className="text-lg font-bold text-white mb-1">Compliance Standards</h3>

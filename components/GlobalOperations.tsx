@@ -46,7 +46,7 @@ export const GlobalOperations: React.FC = () => {
                transition={{ delay: 0.1 }}
                className="text-3xl md:text-4xl font-bold text-white mb-6 leading-tight"
             >
-               National Scale <br/>
+               Scalable Multi-Site <br/>
                <span className="text-[#52525B]">Operating Picture.</span>
             </motion.h2>
             
@@ -61,10 +61,10 @@ export const GlobalOperations: React.FC = () => {
             </motion.p>
 
             <div className="grid grid-cols-2 gap-8 border-t border-[#1F1F1F] pt-8">
-               <Stat label="Active Nodes" value="842" unit="sites" trend="+12%" />
+               <Stat label="Deployment" value="Multi" unit="Region" trend="READY" />
                <Stat label="Data Sovereign" value="100" unit="%" trend="SECURED" />
-               <Stat label="Trans. Volume" value="4.2" unit="M/day" trend="+8%" />
-               <Stat label="Sync Latency" value="48" unit="ms" trend="STABLE" />
+               <Stat label="Throughput" value="High" unit="Vol" trend="SCALABLE" />
+               <Stat label="Sync Latency" value="<50" unit="ms" trend="TARGET" />
             </div>
           </div>
 
@@ -84,7 +84,7 @@ export const GlobalOperations: React.FC = () => {
                       <span className="hidden sm:inline text-[10px] font-mono text-[#71717A]">LIVE_OPERATIONS_VIEW // REGION_AF_WEST</span>
                    </div>
                    <div className="flex items-center gap-3">
-                      <span className="text-[10px] font-mono text-blue-500 animate-pulse">● LIVE STREAM</span>
+                      <span className="text-[10px] font-mono text-blue-500 animate-pulse">● DEMO STREAM</span>
                    </div>
                 </div>
 
@@ -144,23 +144,23 @@ export const GlobalOperations: React.FC = () => {
                    <div className="flex-1 bg-[#0A0A0A]/80 backdrop-blur border border-[#1F1F1F] p-2 rounded flex flex-col sm:flex-row items-center justify-between">
                       <div className="flex items-center gap-2 mb-1 sm:mb-0">
                          <Activity className="w-3 h-3 text-[#52525B]" />
-                         <span className="text-[9px] sm:text-[10px] font-mono text-[#A1A1AA]">UPTIME</span>
+                         <span className="text-[9px] sm:text-[10px] font-mono text-[#A1A1AA]">TARGET UPTIME</span>
                       </div>
-                      <span className="text-[10px] sm:text-xs font-mono text-white">99.99%</span>
+                      <span className="text-[10px] sm:text-xs font-mono text-white">99.9%</span>
                    </div>
                    <div className="flex-1 bg-[#0A0A0A]/80 backdrop-blur border border-[#1F1F1F] p-2 rounded flex flex-col sm:flex-row items-center justify-between">
                       <div className="flex items-center gap-2 mb-1 sm:mb-0">
                          <Zap className="w-3 h-3 text-[#52525B]" />
                          <span className="text-[9px] sm:text-[10px] font-mono text-[#A1A1AA]">OPS/S</span>
                       </div>
-                      <span className="text-[10px] sm:text-xs font-mono text-white">12k</span>
+                      <span className="text-[10px] sm:text-xs font-mono text-white">HIGH</span>
                    </div>
                    <div className="hidden sm:flex flex-1 bg-[#0A0A0A]/80 backdrop-blur border border-[#1F1F1F] p-2 rounded items-center justify-between">
                       <div className="flex items-center gap-2">
                          <Server className="w-3 h-3 text-[#52525B]" />
                          <span className="text-[10px] font-mono text-[#A1A1AA]">STORAGE</span>
                       </div>
-                      <span className="text-xs font-mono text-white">4.2 PB</span>
+                      <span className="text-xs font-mono text-white">SCALABLE</span>
                    </div>
                 </div>
              </div>

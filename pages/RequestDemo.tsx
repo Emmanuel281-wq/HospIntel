@@ -6,9 +6,41 @@ import { motion } from 'framer-motion';
 
 export const RequestDemo: React.FC = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [formData, setFormData] = useState({
+    fullName: '',
+    organization: '',
+    role: '',
+    phone: '',
+    email: '',
+    facilities: 'Single Location',
+    beds: '',
+    deployment: 'On-Premise (Air-gapped)',
+    message: ''
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    // --- Persist to Local Storage for Admin Panel ---
+    try {
+        const existingReqs = JSON.parse(localStorage.getItem('hospintel_demo_requests') || '[]');
+        const newReq = {
+            id: Date.now().toString(),
+            ...formData,
+            status: 'Pending Review',
+            timestamp: new Date().toISOString()
+        };
+        localStorage.setItem('hospintel_demo_requests', JSON.stringify([newReq, ...existingReqs]));
+    } catch (err) {
+        console.error("Local storage error", err);
+    }
+    // ------------------------------------------------
+
     setIsSubmitted(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -90,34 +122,74 @@ export const RequestDemo: React.FC = () => {
             <form onSubmit={handleSubmit} className="space-y-5">
               <div className="space-y-2">
                  <label className="text-[10px] font-mono text-[#71717A] uppercase tracking-wider">Full Name *</label>
-                 <input required type="text" className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors text-sm" />
+                 <input 
+                    required 
+                    name="fullName"
+                    value={formData.fullName}
+                    onChange={handleChange}
+                    type="text" 
+                    className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors text-sm" 
+                 />
               </div>
 
               <div className="space-y-2">
                  <label className="text-[10px] font-mono text-[#71717A] uppercase tracking-wider">Hospital / Organization *</label>
-                 <input required type="text" className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors text-sm" />
+                 <input 
+                    required 
+                    name="organization"
+                    value={formData.organization}
+                    onChange={handleChange}
+                    type="text" 
+                    className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors text-sm" 
+                 />
               </div>
 
               <div className="grid grid-cols-2 gap-5">
                 <div className="space-y-2">
                    <label className="text-[10px] font-mono text-[#71717A] uppercase tracking-wider">Role / Position *</label>
-                   <input required type="text" className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors text-sm" />
+                   <input 
+                      required 
+                      name="role"
+                      value={formData.role}
+                      onChange={handleChange}
+                      type="text" 
+                      className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors text-sm" 
+                   />
                 </div>
                 <div className="space-y-2">
                    <label className="text-[10px] font-mono text-[#71717A] uppercase tracking-wider">Phone *</label>
-                   <input required type="tel" className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors text-sm" />
+                   <input 
+                      required 
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleChange}
+                      type="tel" 
+                      className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors text-sm" 
+                   />
                 </div>
               </div>
 
               <div className="space-y-2">
                  <label className="text-[10px] font-mono text-[#71717A] uppercase tracking-wider">Work Email *</label>
-                 <input required type="email" className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors text-sm" />
+                 <input 
+                    required 
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    type="email" 
+                    className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors text-sm" 
+                 />
               </div>
 
               <div className="grid grid-cols-2 gap-5">
                  <div className="space-y-2">
                     <label className="text-[10px] font-mono text-[#71717A] uppercase tracking-wider">Facilities *</label>
-                    <select className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors text-sm appearance-none">
+                    <select 
+                        name="facilities"
+                        value={formData.facilities}
+                        onChange={handleChange}
+                        className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors text-sm appearance-none"
+                    >
                        <option>Single Location</option>
                        <option>2 - 5 Locations</option>
                        <option>5 - 15 Locations</option>
@@ -126,13 +198,26 @@ export const RequestDemo: React.FC = () => {
                  </div>
                  <div className="space-y-2">
                     <label className="text-[10px] font-mono text-[#71717A] uppercase tracking-wider">Total Beds *</label>
-                    <input required type="text" placeholder="e.g. 500" className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors text-sm" />
+                    <input 
+                        required 
+                        name="beds"
+                        value={formData.beds}
+                        onChange={handleChange}
+                        type="text" 
+                        placeholder="e.g. 500" 
+                        className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors text-sm" 
+                    />
                  </div>
               </div>
 
               <div className="space-y-2">
                  <label className="text-[10px] font-mono text-[#71717A] uppercase tracking-wider">Deployment Preference *</label>
-                 <select className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors text-sm appearance-none">
+                 <select 
+                    name="deployment"
+                    value={formData.deployment}
+                    onChange={handleChange}
+                    className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors text-sm appearance-none"
+                 >
                     <option>On-Premise (Air-gapped)</option>
                     <option>Hybrid Cloud</option>
                     <option>Cloud-Assisted</option>
@@ -142,7 +227,13 @@ export const RequestDemo: React.FC = () => {
 
               <div className="space-y-2">
                  <label className="text-[10px] font-mono text-[#71717A] uppercase tracking-wider">Message (Optional)</label>
-                 <textarea rows={3} className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors text-sm"></textarea>
+                 <textarea 
+                    name="message"
+                    value={formData.message}
+                    onChange={handleChange}
+                    rows={3} 
+                    className="w-full bg-[#050505] border border-[#262626] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors text-sm"
+                 ></textarea>
               </div>
               
               <div className="flex items-start gap-3 py-2">

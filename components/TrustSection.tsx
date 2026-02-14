@@ -10,9 +10,9 @@ const TickerItem = ({ label, value, color = "text-white" }: { label: string, val
 );
 
 export const TrustSection: React.FC = () => {
-  const institutions = [
-    "LAGOON HOSPITALS", "REDDINGTON", "EVERCARE LEKKI", "CEDARCREST", 
-    "FIRST CARDIOLOGY", "ST. NICHOLAS", "THE DUCHESS", "NIZAMIYE"
+  const facilityTypes = [
+    "ACUTE CARE CENTERS", "SPECIALTY CLINICS", "GENERAL HOSPITALS", 
+    "DIAGNOSTIC LABS", "PRIVATE PRACTICE", "EMERGENCY UNITS"
   ];
 
   return (
@@ -43,17 +43,20 @@ export const TrustSection: React.FC = () => {
                {[...Array(2)].map((_, setIndex) => (
                  <React.Fragment key={setIndex}>
                    {/* Metrics */}
-                   <TickerItem label="TX_VOL_24H" value="4.2M" />
-                   <TickerItem label="ACTIVE_NODES" value="842" color="text-blue-400" />
-                   <TickerItem label="SYNC_SUCCESS" value="99.999%" color="text-emerald-400" />
+                   <TickerItem label="ARCHITECTURAL_TARGET" value="HIGH AVAILABILITY" />
+                   <TickerItem label="SYNC_ENGINE" value="ACTIVE" color="text-blue-400" />
+                   <TickerItem label="TARGET_UPTIME" value="99.9%" color="text-emerald-400" />
                    
                    {/* Divider */}
                    <div className="px-6 flex items-center justify-center">
                       <div className="w-1 h-1 rounded-full bg-[#333]"></div>
                    </div>
 
-                   {/* Logos */}
-                   {institutions.map((name, i) => (
+                   {/* Facility Types */}
+                   <div className="flex items-center px-6 gap-2">
+                      <span className="text-[9px] font-mono text-[#52525B] uppercase tracking-wider">DESIGNED FOR:</span>
+                   </div>
+                   {facilityTypes.map((name, i) => (
                      <div key={i} className="flex items-center gap-2 px-6 opacity-40 hover:opacity-100 transition-opacity cursor-default border-r border-[#262626]/30 h-full">
                         <div className="w-3 h-3 bg-[#262626] transform rotate-45"></div>
                         <span className="text-[10px] font-bold text-[#EDEDED] tracking-tight font-sans">{name}</span>
