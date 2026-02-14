@@ -1,11 +1,14 @@
+
 import React, { Suspense, lazy } from 'react';
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import { LoadingScreen } from './components/ui/LoadingScreen';
 import { ErrorBoundary } from './components/ErrorBoundary';
 
-// Lazy load pages for performance optimization
-const Home = lazy(() => import('./pages/Home').then(module => ({ default: module.Home })));
+// Eager load Home for instant LCP (Largest Contentful Paint)
+import { Home } from './pages/Home';
+
+// Lazy load other pages for performance optimization
 const Product = lazy(() => import('./pages/Product').then(module => ({ default: module.Product })));
 const Security = lazy(() => import('./pages/Security').then(module => ({ default: module.Security })));
 const Technology = lazy(() => import('./pages/Technology').then(module => ({ default: module.Technology })));
@@ -36,7 +39,9 @@ function App() {
         <Layout>
           <Suspense fallback={<LoadingScreen />}>
             <Routes>
+              {/* Home is now rendered directly, no suspense fallback for the main route */}
               <Route path="/" element={<Home />} />
+              
               <Route path="/product" element={<Product />} />
               <Route path="/security" element={<Security />} />
               <Route path="/technology" element={<Technology />} />

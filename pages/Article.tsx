@@ -62,7 +62,7 @@ export const Article: React.FC = () => {
                     </div>
                     <div>
                         <div className="text-sm text-white font-medium">{article.author}</div>
-                        <div className="text-xs text-[#71717A]">{article.date}</div>
+                        <div className="text-xs text-[#71717A] md:hidden">HospIntel Systems</div>
                     </div>
                 </div>
                 

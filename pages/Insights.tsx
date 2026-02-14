@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Container } from '../components/ui/Container';
-import { ArrowUpRight, Filter, Calendar, FileText, Download } from 'lucide-react';
+import { ArrowUpRight, Filter, FileText, Download, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { ARTICLES } from '../data/content';
 
-const ArticleCard = ({ title, date, excerpt, tag, readTime, slug, type = "Article" }: any) => {
+const ArticleCard = ({ title, excerpt, tag, readTime, slug, type = "Article" }: any) => {
   const navigate = useNavigate();
   
   return (
@@ -25,10 +25,9 @@ const ArticleCard = ({ title, date, excerpt, tag, readTime, slug, type = "Articl
             {tag}
           </span>
           <span className="text-xs text-[#52525B] font-mono flex items-center gap-1">
-             <Calendar className="w-3 h-3" />
-             {date}
+             <Clock className="w-3 h-3" />
+             {readTime}
           </span>
-          <span className="text-xs text-[#52525B] font-mono">• {readTime}</span>
        </div>
        
        <h2 className="text-2xl font-bold text-[#EDEDED] mb-3 group-hover:text-blue-400 transition-colors flex items-start justify-between gap-4">

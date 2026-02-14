@@ -1,11 +1,20 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Container } from './ui/Container';
-import { Database, Wifi, WifiOff, Activity, Share2, ShieldAlert, Play, Pause, Power, RefreshCw } from 'lucide-react';
+import { Database, Share2, ShieldAlert, Play, Pause, Power, RefreshCw } from 'lucide-react';
 
 // --- Sub-components for the Visualization ---
 
-const Node = ({ x, y, label, isOffline, isMaster, isSyncing }: { x: string; y: string; label: string; isOffline: boolean; isMaster?: boolean; isSyncing: boolean }) => (
+interface NodeProps {
+  x: string;
+  y: string;
+  label: string;
+  isOffline: boolean;
+  isMaster?: boolean;
+  isSyncing: boolean;
+}
+
+const Node: React.FC<NodeProps> = ({ x, y, label, isOffline, isMaster, isSyncing }) => (
   <motion.div 
     className="absolute flex flex-col items-center justify-center z-20"
     style={{ left: x, top: y }}
@@ -41,7 +50,15 @@ const Node = ({ x, y, label, isOffline, isMaster, isSyncing }: { x: string; y: s
   </motion.div>
 );
 
-const Connection = ({ start, end, active, color, dashed = false }: { start: {x: string, y: string}, end: {x: string, y: string}, active: boolean, color: string, dashed?: boolean }) => {
+interface ConnectionProps {
+  start: {x: string, y: string};
+  end: {x: string, y: string};
+  active: boolean;
+  color: string;
+  dashed?: boolean;
+}
+
+const Connection: React.FC<ConnectionProps> = ({ start, end, active, color, dashed = false }) => {
   return (
     <motion.line 
       x1={start.x} y1={start.y} x2={end.x} y2={end.y}
@@ -238,12 +255,12 @@ export const Infrastructure: React.FC = () => {
 
                       {/* Mesh Links (Amber) - Peripheral Loop */}
                       <>
-                        <Connection start={{x: '20%', y: '20%'}} end={{x: '80%', y: '20%'}} active={isOffline} color="#EAB308" dashed />
-                        <Connection start={{x: '80%', y: '20%'}} end={{x: '80%', y: '80%'}} active={isOffline} color="#EAB308" dashed />
-                        <Connection start={{x: '80%', y: '80%'}} end={{x: '20%', y: '80%'}} active={isOffline} color="#EAB308" dashed />
-                        <Connection start={{x: '20%', y: '80%'}} end={{x: '20%', y: '20%'}} active={isOffline} color="#EAB308" dashed />
+                        <Connection key="mesh-1" start={{x: '20%', y: '20%'}} end={{x: '80%', y: '20%'}} active={isOffline} color="#EAB308" dashed />
+                        <Connection key="mesh-2" start={{x: '80%', y: '20%'}} end={{x: '80%', y: '80%'}} active={isOffline} color="#EAB308" dashed />
+                        <Connection key="mesh-3" start={{x: '80%', y: '80%'}} end={{x: '20%', y: '80%'}} active={isOffline} color="#EAB308" dashed />
+                        <Connection key="mesh-4" start={{x: '20%', y: '80%'}} end={{x: '20%', y: '20%'}} active={isOffline} color="#EAB308" dashed />
                         {/* Cross links */}
-                        <Connection start={{x: '20%', y: '20%'}} end={{x: '80%', y: '80%'}} active={isOffline} color="#EAB308" dashed />
+                        <Connection key="mesh-5" start={{x: '20%', y: '20%'}} end={{x: '80%', y: '80%'}} active={isOffline} color="#EAB308" dashed />
                       </>
                    </svg>
 

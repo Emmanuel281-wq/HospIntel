@@ -47,26 +47,22 @@ export const Home: React.FC = () => {
                  {
                     tag: "Infrastructure",
                     title: "The CAP Theorem in Critical Care",
-                    date: "Oct 2026",
                     desc: "Why we prioritize Availability over Consistency in our offline-first sync engine."
                  },
                  {
                     tag: "Security",
                     title: "Zero-Trust Device Architecture",
-                    date: "Sep 2026",
                     desc: "Implementing node-level encryption and mutual TLS in hostile network environments."
                  },
                  {
                     tag: "Case Study",
                     title: "Scaling to 5M Records in Lagos",
-                    date: "Aug 2026",
                     desc: "Performance benchmarks from a live deployment across 12 distributed facilities."
                  }
               ].map((item, i) => (
                  <div key={i} className="group cursor-pointer border-t border-[#262626] pt-6 hover:border-blue-500/50 transition-colors" onClick={() => navigate('/insights')}>
                     <div className="flex justify-between items-center mb-4">
                        <span className="text-[10px] font-mono text-blue-500 uppercase">{item.tag}</span>
-                       <span className="text-[10px] font-mono text-[#52525B]">{item.date}</span>
                     </div>
                     <h3 className="text-xl font-bold text-white mb-3 group-hover:text-blue-400 transition-colors">{item.title}</h3>
                     <p className="text-[#A1A1AA] text-sm leading-relaxed">{item.desc}</p>
